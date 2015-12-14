@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<bean id="mailService" class="com.mcnc.yuga.service.impl.SMTPMailService">
+		<property name="userName" value="${userName}"/>
+		<constructor-arg>
+			<props>
+				<prop key="mail.smtp.host">mail.mcnc.co.kr</prop>
+				<prop key="mail.smtp.auth">false</prop> 
+				<prop key="mail.smtp.port">25</prop> 
+			</props>
+		</constructor-arg>
+		<property name="mailContentList">
+			<list>
+				
+				<ref local="requestMemberShipTemplate" />
+				<ref local="requestUnsubmitTemplate" />
+				<ref local="requestOvertimeTemplate" />
+				
+				<ref local="responseMembershipTemplate" />
+				<ref local="responseUnsubmitTemplate" />
+				<ref local="responseOvertimeTemplate" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="requestMemberShipTemplate" class="com.mcnc.yuga.dto.MailContent">
+		<property name="subject" value="Membership Request" />
+		<property name="content" >
+			<value>
+				<![CDATA[
+				<p>Dear varReceiverName,</p>
+
+				<p>Please kindly add me into [varProjectName] as a member.</p>
+				
+				<p>&nbsp;</p>
+				
+				<p>Best Regards,</p>
+				
+				<p>varSenderName</p>
+				]]>
+			</value>
+		</property> 
+	</bean>	
+	
+	<bean id="requestUnsubmitTemplate" class="com.mcnc.yuga.dto.MailContent">
+		<property name="subject" value="Request Unsubmit Timecard" />
+		<property name="content" >
+			<value>
+				<![CDATA[
+				<p>Dear varReceiverName,</p>
+
+				<p>Please kindly unsubmit my timecard from varStartDate to varEndDate of project [varProjectName]</p>
+				
+				<p>&nbsp;</p>
+				
+				<p>Best Regards,</p>
+				
+				<p>varSenderName</p>
+				
+				]]>
+			</value>
+		</property>
+	</bean>
+	
+	<bean id="requestOvertimeTemplate" class="com.mcnc.yuga.dto.MailContent">
+		<property name="subject" value="Request Overtime Approval" />
+		<property name="content">
+			<value>
+				<![CDATA[
+				<p>Dear varReceiverName,</p>
+				
+				<p>Please kindly approve my overtime from varStartDate to varEndDate of project [varProjectName]</p>
+				
+				<p>&nbsp;</p>
+				
+				<p>Best Regards,</p>
+				
+				<p>varSenderName</p>
+				
+				]]>
+			</value>
+		</property>
+	</bean>
+		
+	<bean id="responseMembershipTemplate" class="com.mcnc.yuga.dto.MailContent">
+		<property name="subject" value="Response" />
+		<property name="content" >
+			<value>
+				<![CDATA[
+				<p>Dear varReceiverName,</p>
+
+				<p>varResponseMessage </p>
+				
+				<p>project: [varProjectName]</p>
+				
+				<p>&nbsp;</p>
+				
+				<p>Best Regards,</p>
+				
+				<p>varSenderName</p>
+				]]>
+			</value>
+		</property> 
+	</bean>
+	
+	<bean id="responseUnsubmitTemplate" class="com.mcnc.yuga.dto.MailContent">
+		<property name="subject" value="Response" />
+		<property name="content" >
+			<value>
+				<![CDATA[
+				<p>Dear varReceiverName,</p>
+
+				<p>varResponseMessage </p>
+				
+				<p>project [varProjectName]</p>
+
+				<p>Period: varStartDate to varEndDate</p>
+				
+				<p>&nbsp;</p>
+				
+				<p>Best Regards,</p>
+				
+				<p>varSenderName</p>
+				
+				]]>
+			</value>
+		</property>
+	</bean>
+	
+	<bean id="responseOvertimeTemplate" class="com.mcnc.yuga.dto.MailContent">
+		<property name="subject" value="Response" />
+		<property name="content" >
+			<value>
+				<![CDATA[
+				<p>Dear varReceiverName,</p>
+
+				<p>varResponseMessage </p>
+				
+				<p>project [varProjectName]</p>
+
+				<p>Period: varStartDate to varEndDate</p>
+				
+				<p>&nbsp;</p>
+				
+				<p>Best Regards,</p>
+				
+				<p>varSenderName</p>
+				]]>
+			</value>
+		</property>
+	</bean>
+</beans>
+
+
+

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+
+	<!-- 404 Error Page -->
+	<definition name="404/index" template="/WEB-INF/views/404/index.jsp" />
+
+	<!-- Approval Page -->
+	<definition name="approval/index" extends="default">
+		<put-attribute name="body" value="/WEB-INF/views/approval/index.jsp" />
+	</definition>
+
+	<!-- Data Page -->
+	<definition name="data/index" extends="default">
+		<put-attribute name="body" value="/WEB-INF/views/data/index.jsp" />
+	</definition>
+	
+	<!-- Data sub tabs -->
+	<definition name="data/organization" 	template="/WEB-INF/views/data/organization.jsp" />
+	<definition name="data/employee" 		template="/WEB-INF/views/data/employee.jsp" />
+	<definition name="data/employeeLevel" 	template="/WEB-INF/views/data/employeeLevel.jsp" />
+	<definition name="data/projectType" 	template="/WEB-INF/views/data/projectType.jsp" />
+	<definition name="data/holiday" 		template="/WEB-INF/views/data/holiday.jsp" />
+	<definition name="data/opexCharge" 		template="/WEB-INF/views/data/opexCharge.jsp" />
+	<definition name="data/profitTarget" 	template="/WEB-INF/views/data/profitTarget.jsp" />
+	<definition name="data/exchangeRate" 	template="/WEB-INF/views/data/exchangeRate.jsp" />
+	<definition name="data/timecard" 		template="/WEB-INF/views/data/timecard.jsp" />
+	<definition name="data/gpTarget" 		template="/WEB-INF/views/data/gpTarget.jsp" />
+
+	<!-- Employee Page -->
+	<definition name="employee/index" extends="setting">
+		<put-attribute name="body">
+			<definition template="/WEB-INF/views/elements/setting/menu.jspx">
+				<put-attribute name="tab"
+					value="/WEB-INF/views/employee/index.jsp" />
+				<put-attribute name="title" value="Employee" type="string" />
+			</definition>
+		</put-attribute>
+	</definition>
+	
+	<!-- Employee Level Page -->
+	<definition name="employeeLevel/index" extends="setting">
+		<put-attribute name="body">
+			<definition template="/WEB-INF/views/elements/setting/menu.jspx">
+				<put-attribute name="tab" value="/WEB-INF/views/employeeLevel/index.jsp" />
+				<put-attribute name="title" value="Unit Price" type="string"/>
+			</definition>
+		</put-attribute>
+	</definition>
+	
+	<!-- Exception Page -->
+	<definition name="exception/employeeCheck" extends="default">
+		<put-attribute name="title" value="Exception" type="string"/>
+		<put-attribute name="body" value="/WEB-INF/views/exception/employeeCheck.jsp" />
+	</definition>
+	
+	<!-- Holiday Page -->
+	<definition name="holiday/index" extends="setting">
+		<put-attribute name="body">
+			<definition template="/WEB-INF/views/elements/setting/menu.jspx">
+				<put-attribute name="tab" value="/WEB-INF/views/holiday/index.jsp" />
+				<put-attribute name="title" value="Holiday" type="string"/>
+			</definition>
+		</put-attribute>
+	</definition>
+	
+	<!-- Holiday Page -->
+	<definition name="profitTarget/index" extends="setting">
+		<put-attribute name="body">
+			<definition template="/WEB-INF/views/elements/setting/menu.jspx">
+				<put-attribute name="tab" value="/WEB-INF/views/profitTarget/index.jsp" />
+				<put-attribute name="title" value="Profit Target" type="string"/>
+			</definition>
+		</put-attribute>
+	</definition>
+			
+	<!-- Notice Page -->
+	<definition name="notice/index" extends="default">
+		<put-attribute name="body" value="/WEB-INF/views/notice/index.jsp" />
+	</definition>
+	
+	<!-- Organization Page -->
+	<definition name="organization/index" extends="setting">
+		<put-attribute name="body">
+			<definition template="/WEB-INF/views/elements/setting/menu.jspx">
+				<put-attribute name="tab" value="/WEB-INF/views/organization/index.jsp" />
+				<put-attribute name="title" value="Organization" type="string"/>
+			</definition>
+		</put-attribute>
+	</definition>
+	
+	<!-- Opex Charge Page -->
+	<definition name="opexCharge/index" extends="setting">
+		<put-attribute name="body">
+			<definition template="/WEB-INF/views/elements/setting/menu.jspx">
+				<put-attribute name="tab" value="/WEB-INF/views/opexCharge/index.jsp" />
+				<put-attribute name="title" value="Opex Charge" type="string"/>
+			</definition>
+		</put-attribute>
+	</definition>
+	
+	<!-- Project Pages -->
+	<definition name="project/index" extends="default">
+		<put-attribute name="title" value="Project" type="string"/>
+		<put-attribute name="body" value="/WEB-INF/views/project/index.jsp" />
+	</definition>
+	<definition name="project/add" extends="default">
+		<put-attribute name="title" value="New Project" type="string"/>
+		<put-attribute name="body">
+			<definition template="/WEB-INF/views/project/add.jspx">
+				<put-attribute name="projectTabBody"  expression="${page}" />
+			</definition>
+		</put-attribute>
+	</definition>
+	<definition name="project/edit" extends="default">
+		<put-attribute name="title" value="Update Project" type="string"/>
+		<put-attribute name="body">
+			<definition template="/WEB-INF/views/project/update.jspx">
+				<put-attribute name="projectTabBody"  expression="${page}" />
+			</definition>
+		</put-attribute>
+	</definition>
+	<definition name="project/view" template="/WEB-INF/views/project/view.jsp" />
+	
+	<!-- Project Type Pages -->
+	<definition name="projectType/index" extends="setting">
+		<put-attribute name="body">
+			<definition template="/WEB-INF/views/elements/setting/menu.jspx">
+				<put-attribute name="title" value="Project Type" type="string"/>
+				<put-attribute name="tab" value="/WEB-INF/views/projectType/index.jsp" />
+			</definition>
+		</put-attribute>
+	</definition>
+	<definition name="projectType/add" extends="setting">
+		<put-attribute name="body">
+			<definition template="/WEB-INF/views/elements/setting/menu.jspx">
+				<put-attribute name="title" value="New Project Type" type="string"/>
+				<put-attribute name="tab" value="/WEB-INF/views/projectType/add.jsp" />
+			</definition>
+		</put-attribute>
+	</definition>
+	<definition name="projectType/update" extends="setting">
+		<put-attribute name="body">
+			<definition template="/WEB-INF/views/elements/setting/menu.jspx">
+				<put-attribute name="title" value="Update Project Type" type="string"/>
+				<put-attribute name="tab" value="/WEB-INF/views/projectType/update.jsp" />
+			</definition>
+		</put-attribute>
+	</definition>
+	
+	<!-- Report Page -->
+	<definition name="report/index" extends="default">
+		<put-attribute name="body" value="/WEB-INF/views/report/index.jsp" />
+	</definition>
+	
+	<!-- Report Page Tab -->
+	<definition name="report/projectCost" 		template="/WEB-INF/views/report/projectCost.jsp" />
+	<definition name="report/projectProfit" 	template="/WEB-INF/views/report/projectProfit.jsp" />
+	<definition name="report/teamProfit" 		template="/WEB-INF/views/report/teamProfit.jsp" />
+	<definition name="report/revenueTarget" 	template="/WEB-INF/views/report/revenueTarget.jsp" />
+	<definition name="report/gpTarget" 			template="/WEB-INF/views/report/gpTarget.jsp" />
+	<definition name="report/timecard" 			template="/WEB-INF/views/report/timecard.jsp" />
+	
+	<!-- Request Pages -->
+	<definition name="request/index" extends="default">
+		<put-attribute name="body" value="/WEB-INF/views/request/index.jsp" />
+	</definition>
+	<definition name="project/addNotice" extends="default">
+		<put-attribute name="title" value="New Project" type="string"/>
+		<put-attribute name="body" value="/WEB-INF/views/request/add.jsp" />
+	</definition>
+	
+	<!-- Security Pages -->
+	<definition name="security/login"  template="/WEB-INF/views/security/login.jsp" />
+	<definition name="security/renewPwd"  template="/WEB-INF/views/security/renewPwd.jsp" />
+	
+	<!-- Timecard Pages -->
+	<definition name="timecard/index" extends="default">
+		<put-attribute name="title" value="Timecard" type="string"/>
+		<put-attribute name="body" value="/WEB-INF/views/timecard/index.jsp" />
+	</definition>
+	
+	<!-- Report Page -->
+	<definition name="error/index" extends="default">
+		<put-attribute name="body" value="/WEB-INF/views/error/index.jsp" />
+	</definition>
+	
+	<!-- ExchangeRate page -->
+	<definition name="exchangeRate/index" extends="setting">
+		<put-attribute name="body" >
+			<definition template="/WEB-INF/views/elements/setting/menu.jspx">
+					<put-attribute name="tab" value="/WEB-INF/views/exchangeRate/index.jsp" />
+					<put-attribute name="title" value="Exchang Rate" type="string"/>
+			</definition>
+		</put-attribute>
+	</definition>
+	
+	<!-- GP Target page -->
+	 <definition name="gpTarget/index" extends="setting">
+		<put-attribute name="body" >
+			<definition template="/WEB-INF/views/elements/setting/menu.jspx">
+					<put-attribute name="tab" value="/WEB-INF/views/gpTarget/index.jsp" />
+					<put-attribute name="title" value="GPTarget" type="string"/>
+			</definition>
+		</put-attribute>
+	</definition>
+	
+	
+	
+</tiles-definitions>

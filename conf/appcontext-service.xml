@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://ww w.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="
+                            http://www.springframework.org/schema/beans 
+                            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                            http://www.springframework.org/schema/context 
+                            http://www.springframework.org/schema/context/spring-context-3.2.xsd
+                            http://www.springframework.org/schema/aop 
+                            http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+                            http://www.springframework.org/schema/jee 
+                            http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
+                            http://www.springframework.org/schema/util 
+                            http://www.springframework.org/schema/util/spring-util-3.2.xsd
+        					http://www.springframework.org/schema/task 
+        					http://www.springframework.org/schema/task/spring-task-3.2.xsd		
+                            http://www.springframework.org/schema/mvc 
+                            http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+                            http://www.springframework.org/schema/jdbc 
+                            http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd">
+
+	<bean id="pkServiceImpl" class="com.mcnc.yuga.service.impl.PKServiceImpl" />
+	<bean id="noticeMessageServiceImpl" class="com.mcnc.yuga.service.impl.NoticeMessageServiceImpl" />
+	<bean id="employeeService" class="com.mcnc.yuga.service.impl.EmployeeServiceImpl" />
+	<bean id="projectTypeService" class="com.mcnc.yuga.service.impl.ProjectTypeServiceImpl" />
+	<bean id="pagingResponseServiceImpl" class="com.mcnc.yuga.service.impl.PagingResponseServiceImpl" />
+	<bean id="projectServiceImpl" class="com.mcnc.yuga.service.impl.ProjectServiceImpl" />
+	<bean id="organizationServiceImpl" class="com.mcnc.yuga.service.impl.OrganizationServiceImpl" />
+	<bean id="requestServiceImpl" class="com.mcnc.yuga.service.impl.RequestServiceImpl" />
+	<bean id="employeeLevelServiceImpl" class="com.mcnc.yuga.service.impl.EmployeeLevelServiceImpl" />
+	<bean id="importEmployeeImpl" class="com.mcnc.yuga.service.impl.ImportEmployeeServiceImpl" />
+	<bean id="noticeServiceImpl" class="com.mcnc.yuga.service.impl.NoticeServiceImpl" />
+	<bean id="projectMemberServiceImpl" class="com.mcnc.yuga.service.impl.ProjectMemberServiceImpl" />
+	<bean id="holidayServiceImpl" class="com.mcnc.yuga.service.impl.HolidayServiceImpl" />
+	<bean id="timecardServiceImpl" class="com.mcnc.yuga.service.impl.TimecardServiceImpl" />
+	<bean id="projectBillServiceImpl" class="com.mcnc.yuga.service.impl.ProjectBillServiceImpl" />
+	<bean id="projectResourcePlanImpl" class="com.mcnc.yuga.service.impl.ProjectResourcePlanImpl" />
+	<bean id="unsubmitRequestServiceImpl" class="com.mcnc.yuga.service.impl.UnsubmitRequestServiceImpl" />
+	<bean id="manMonthServiceImpl" class="com.mcnc.yuga.service.impl.ManMonthServiceImpl" />
+	<bean id="overtimeRequestServiceImpl" class="com.mcnc.yuga.service.impl.OvertimeRequestServiceImpl" />
+	<bean id="projectBudgetActualServiceImpl" class="com.mcnc.yuga.service.impl.ProjectBudgetActualServiceImpl" />
+	<bean id="projectResourceActualServiceImpl" class="com.mcnc.yuga.service.impl.ProjectResourceActualServiceImpl" />
+	<bean id="projectCostServiceImpl" class="com.mcnc.yuga.service.impl.ProjectCostServiceImpl" />
+	<bean id="opexChargeServiceImpl" class="com.mcnc.yuga.service.impl.OpexChargeServiceImpl" />
+	<bean id="teamProfitServiceImpl" class="com.mcnc.yuga.service.impl.TeamProfitServiceImpl" />
+	<bean id="projectProfitServiceImpl" class="com.mcnc.yuga.service.impl.ProjectProfitServiceImpl" />
+	<bean id="profitTargetServiceImpl" class="com.mcnc.yuga.service.impl.ProfitTargetServiceImpl" />
+	<bean id="masterDataServiceImpl" class="com.mcnc.yuga.service.impl.MasterDataServiceImpl" />
+	<bean id="exchangeRateServiceImpl" class="com.mcnc.yuga.service.impl.ExchangeRateServiceImpl" />
+	<bean id="gpTargetServiceImpl" class="com.mcnc.yuga.service.impl.GPTargetServiceImpl" />
+	<bean id="projectMemberGroupServiceImpl" class="com.mcnc.yuga.service.impl.ProjectMemberGroupServiceImpl" />
+	<bean id="plannedMemberServiceImpl" class="com.mcnc.yuga.service.impl.PlannedMemberServiceImpl" />
+	<bean id="plannedMemberGroupServiceImpl" class="com.mcnc.yuga.service.impl.PlannedMemberGroupServiceImpl" />
+	<bean id="revenueTargetServiceImpl" class="com.mcnc.yuga.service.impl.RevenueTargetServiceImpl" />
+	<bean id="originalResourcePlanServiceImpl" class="com.mcnc.yuga.service.impl.OriginalResourcePlanServiceImpl" />
+
+</beans>

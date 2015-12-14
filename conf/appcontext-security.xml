@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/security 
+		http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+	<security:http use-expressions="true" >
+
+		<security:form-login login-page="/security/login" authentication-failure-url="/security/loginFail" default-target-url="/timecard/index"/>
+		<security:logout logout-success-url="/security/login" invalidate-session="true"/>
+		<security:session-management>
+			<security:concurrency-control max-sessions="1" expired-url="/security/expired"/>
+		</security:session-management>
+		
+			<!-- <security:intercept-url pattern="/error" filters="none" /> -->
+		<security:intercept-url pattern="/resources/**" 		access="permitAll" />
+		<security:intercept-url pattern="/security/login*" 		access="permitAll" />
+		
+		<security:intercept-url pattern="/project/me*" 			access="isAuthenticated()" />
+		<security:intercept-url pattern="/project/getGrid*" 	access="isAuthenticated()" />
+		<security:intercept-url pattern="/project/*/view/**" 	access="isAuthenticated()" />
+		<security:intercept-url pattern="/holiday/getHoliday" 	access="isAuthenticated()" />
+		
+		<security:intercept-url pattern="/employee/**" 			access="hasRole('S')" />
+		<security:intercept-url pattern="/projectType/**" 		access="hasRole('S')" />
+		<security:intercept-url pattern="/employeeLevel/**" 	access="hasRole('S')" />
+		<security:intercept-url pattern="/organization/**" 		access="hasRole('S')" />
+		<security:intercept-url pattern="/holiday/**" 			access="hasRole('S')" />
+		<security:intercept-url pattern="/project/****" 			access="hasRole('S')" />
+		<security:intercept-url pattern="/data/**" 				access="hasRole('S')" />
+		<security:intercept-url pattern="/report/**" 			access="hasRole('S')" />
+		<security:intercept-url pattern="/opexCharge/**" 		access="hasRole('S')" />
+		<security:intercept-url pattern="/teamProfit/**" 		access="hasRole('S')" />
+		<security:intercept-url pattern="/profitTarget/**" 		access="hasRole('S')" />
+		<security:intercept-url pattern="/masterData/**" 		access="hasRole('S')" />
+		<security:intercept-url pattern="/exchangeRate/**" 		access="hasRole('S')" />
+		
+		<security:intercept-url pattern="/approval/**" 			access="hasAnyRole('S', 'P')" />
+		<security:intercept-url pattern="/**" 					access="isAuthenticated()"/>
+		
+	</security:http>
+	
+	
+	<security:authentication-manager erase-credentials="false"> 
+		<security:authentication-provider ref="userAuthenticationProvider"/> 
+	</security:authentication-manager> 
+	
+	<bean id="userAuthenticationProvider" class="com.mcnc.yuga.security.provider.UserAuthenticationProvider"/>
+</beans>

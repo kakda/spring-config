@@ -1,0 +1,130 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/mvc		
+		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+        http://www.springframework.org/schema/beans     
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/security 
+		http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+	<context:component-scan base-package="com.mcnc.yuga.controller" />
+
+	<security:global-method-security
+		pre-post-annotations="enabled" />
+
+
+	<!-- <mvc:annotation-driven /> -->
+	<!-- <context:annotation-config /> -->
+
+	<mvc:resources mapping="/resources/**" location="/assets/" />
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="20971520"></property>
+		<property name="maxInMemorySize" value="1048576"></property>
+	</bean>
+
+	<bean id="jacksonMessageConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"></bean>
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="jacksonMessageConverter" />
+			</list>
+		</property>
+	</bean>
+
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="mediaTypes">
+			<map>
+				<entry key="html" value="text/html" />
+				<entry key="json" value="application/json" />
+				<entry key="txt" value="text/plain"></entry>
+			</map>
+		</property>
+		<property name="viewResolvers">
+			<list>
+				<bean id="viewResolver"
+					class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+					<property name="viewClass">
+						<value> org.springframework.web.servlet.view.tiles3.TilesView
+						</value>
+					</property>
+				</bean>
+			</list>
+		</property>
+		<property name="defaultViews">
+			<list>
+				<bean
+					class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+					<property name="prefixJson" value="true" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean class="com.mcnc.yuga.security.provider.ExecuteTimeInterceptor"
+		id="executeTimeInterceptor" />
+
+	<mvc:interceptors>
+		<ref bean="executeTimeInterceptor" />
+	</mvc:interceptors>
+
+
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean
+				class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+				<property name="objectMapper">
+					<bean class="org.codehaus.jackson.map.ObjectMapper">
+						<property name="serializationInclusion">
+							<value
+								type="org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion">NON_NULL</value>
+						</property>
+					</bean>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+
+	<bean id="placeholderConfigMM" class="com.mcnc.yuga.helper.property.PropertiesService">
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="locations">
+			<list>
+				<value>/WEB-INF/conf/property/key.properties</value>
+			</list>
+		</property>
+
+	</bean>
+
+	<bean class="org.springframework.web.servlet.view.tiles3.TilesConfigurer"
+		id="tilesConfigurer">
+		<property name="definitions">
+			<list>
+				<value>/WEB-INF/layouts/layouts.xml</value>
+				<value>/WEB-INF/layouts/views.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- <bean id="exceptionResolver"
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.lang.Throwable">exception</prop>
+				<prop key=".DataAccessException">dataAccessFailure</prop>
+	            <prop key=".NoSuchRequestHandlingMethodException">resourceNotFound</prop>
+	            <prop key=".TypeMismatchException">resourceNotFound</prop>
+	            <prop key=".MissingServletRequestParameterException">resourceNotFound</prop>
+			</props>
+		</property>
+	</bean> -->
+</beans>

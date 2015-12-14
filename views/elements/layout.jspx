@@ -1,0 +1,153 @@
+<html xmlns:jsp="http://java.sun.com/JSP/Page" 
+      xmlns:c="http://java.sun.com/jsp/jstl/core" 
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions" 
+      xmlns:tiles="http://tiles.apache.org/tags-tiles" 
+      xmlns:spring="http://www.springframework.org/tags"
+      xmlns:function="http://java.sun.com/jsp/jstl/functions"
+      xmlns:security="http://www.springframework.org/security/tags">  
+
+    <jsp:output doctype-root-element="HTML" doctype-system="about:legacy-compat" />
+    
+    <jsp:directive.page contentType="text/html;charset=UTF-8" />  
+    <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10, IE=11" />
+    <jsp:directive.page pageEncoding="UTF-8" /> 
+	
+
+	<spring:url var="js_jquery_url" value="/resources/js/jquery-1.11.1.js"/>
+	<spring:url var="js_jquery_migrate_url" value="/resources/js/jquery-migrate-1.2.1.js"/>
+	<spring:url var="js_jquery_validate_url" value="/resources/js/jquery.validate.js"/>
+	<spring:url var="js_jquery_ui_url" value="/resources/js/jquery-ui.js"/>
+	<spring:url var="js_base64_url" value="/resources/js/base64.js"/>
+	<spring:url var="js_jstree_url" value="/resources/js/jstree.js"/>
+	<spring:url var="js_i18n_grid_url" value="/resources/js/i18n/grid.locale-en.js"/>
+	<spring:url var="js_jqgrid_url" value="/resources/js/jquery.jqGrid.src.js"/>
+	<spring:url var="js_numeric_url" value="/resources/js/autoNumeric.js"/>
+	<spring:url var="js_plugin_url" value="/resources/js/plugin.js"/>
+	<spring:url var="js_constant_url" value="/resources/js/constant.js"/>
+	<spring:url var="js_config_url" value="/resources/js/config.js"/>
+	<spring:url var="js_date_url" value="/resources/js/date.js"/>
+	<spring:url var="js_session_url" value="/resources/js/jquery.session.js"/>
+	<spring:url var="js_serial_obj_url" value="/resources/js/jquery.serialize-object.js"/>
+	<spring:url var="js_fullcalendar_url" value="/resources/js/fullcalendar.js"/>
+	
+
+	<spring:url var="css_jquery_ui_url" value="/resources/css/jquery-ui.css"/>
+	<spring:url var="css_theme_url" value="/resources/css/theme.css"/>
+	<spring:url var="css_ui_jqgrid_url" value="/resources/css/ui.jqgrid.css"/>
+	<spring:url var="css_jstree_url" value="/resources/css/jstree.css"/>
+	<spring:url var="css_common_url" value="/resources/css/common.css"/>
+	<spring:url var="css_fullcalendar_url" value="/resources/css/fullcalendar.css"/>
+	<spring:url var="css_fullcalendar_print_url" value="/resources/css/fullcalendar.print.css"/>
+	
+	<spring:url var="img_logo" value="/resources/images/logo.png" />
+	<spring:url var="img_user" value="/resources/images/user.png" />
+	
+	<spring:url var="url_home" value="/" />
+	<spring:url var="url_notice" value="/notice/index" />
+	<spring:url var="url_project" value="/project/index" />
+	<spring:url var="url_my_project" value="/project/me" />
+	<spring:url var="url_timecard" value="/timecard/index" />
+	<spring:url var="url_approval" value="/approval/index" />
+	<spring:url var="url_request" value="/request/index" />
+	<spring:url var="url_report" value="/report/index" />
+	<spring:url var="url_master_data" value="/data/index" />
+	<spring:url var="url_setting" value="/organization/index" />
+
+	<spring:url var="url_logout" value="/j_spring_security_logout" />
+	
+	<c:set var="fullUrl" value="${function:replace(requestScope['javax.servlet.forward.request_uri'], pageContext.request.contextPath, '') }" />
+	<c:set var="pathUrl" value="${function:split(fullUrl, '/')}" />
+	
+	
+	<head>
+		
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title><tiles:getAsString name="title" /></title>
+		
+		
+		<link rel="stylesheet" href="${css_jquery_ui_url}" />
+		<link rel="stylesheet" href="${css_theme_url}" /> 
+		<link rel="stylesheet" href="${css_ui_jqgrid_url}" />
+		<link rel="stylesheet" href="${css_jstree_url}" />
+		<link rel="stylesheet" href="${css_common_url}" />
+		<link rel="stylesheet" href="${css_fullcalendar_url}" type="text/css" />
+		<link rel="stylesheet" href="${css_fullcalendar_print_url }" type="text/css"  media='print' />
+		
+		
+		<script type="text/javascript" src="${js_jquery_url}"><jsp:text /></script>
+		<script type="text/javascript" src="${js_jquery_migrate_url}"><jsp:text /></script>
+		<script type="text/javascript" src="${js_jquery_validate_url}"><jsp:text /></script>
+		<script type="text/javascript" src="${js_jquery_ui_url}"><jsp:text /></script>
+		<script type="text/javascript" src="${js_base64_url}"><jsp:text /></script>
+		<script type="text/javascript" src="${js_jstree_url}"><jsp:text /></script>
+		<script type="text/javascript" src="${js_i18n_grid_url}"><jsp:text /></script>
+		<script type="text/javascript" src="${js_jqgrid_url}"><jsp:text /></script>
+		<script type="text/javascript" src="${js_numeric_url}"><jsp:text /></script>
+		<script type="text/javascript" src="${js_plugin_url}"><jsp:text /></script> 
+		<script type="text/javascript" src="${js_date_url}"><jsp:text /></script>
+		<script type="text/javascript" src="${js_config_url}"><jsp:text /></script>
+		<script type="text/javascript" src="${js_constant_url}"><jsp:text /></script>
+		<script type="text/javascript" src="${js_session_url}"><jsp:text /></script>
+		<script type="text/javascript" src="${js_serial_obj_url}"><jsp:text /></script>
+		<script type="text/javascript" src="${js_fullcalendar_url }" ><jsp:text /></script>
+		<script type="text/javascript">
+			var isAdmin = false;
+		</script>
+	</head>
+	
+  	<body>
+  		
+		<div class="header">
+			<div class="head">
+				<div class="logo">
+					<a href="${url_home}"><img src="${img_logo}" /></a>
+				</div>
+				<div class="info">
+					<a href="${url_logout}" >Logout</a>
+					<security:authentication property="appUser.userName"/> <img src="${img_user}" />
+				</div>
+			</div>
+	
+			<security:authorize access="isAuthenticated()">
+				<ul class="menu">
+					<li><a href="${url_notice}" class="notice ${pathUrl[0] == 'notice' || pathUrl[0] == '' ? 'active' : '' }"><jsp:text /></a></li>
+					
+					<security:authorize access="hasRole('S')">
+						<li><a href="${url_project}" class="project ${pathUrl[0] == 'project' ? 'active' : '' }" ><jsp:text /></a></li>
+						<script type="text/javascript">
+							isAdmin = true;
+						</script>
+					</security:authorize>
+					
+					<security:authorize access="hasAnyRole('P')">
+						<li><a href="${url_my_project}" class="my-project ${pathUrl[0] == 'project' ? 'active' : '' }"><jsp:text /></a></li>
+					</security:authorize>
+					
+					<li><a href="${url_timecard}" class="timecard ${pathUrl[0] == 'timecard'? 'active' : '' }"><jsp:text /></a></li>
+					
+					<security:authorize access="hasAnyRole('S', 'P')">
+						<li><a href="${url_approval}" class="approval ${pathUrl[0] == 'approval' ? 'active' : '' }"><jsp:text /></a></li>
+					</security:authorize>
+					
+					<li><a href="${url_request}" class="request ${pathUrl[0] == 'request' ? 'active' : '' }"><jsp:text /></a></li>
+					
+					<security:authorize access="hasRole('S')">
+						<li><a href="${url_report}" class="report ${pathUrl[0] == 'report' ? 'active' : ''}"><jsp:text /></a></li>
+						<li><a href="${url_master_data}" class="master-data ${pathUrl[0] == 'data' ? 'active' : '' }"><jsp:text /></a></li>
+						<li><a href="${url_setting}" class="setting ${pathUrl[0] == 'organization' || pathUrl[0] == 'employee'  || pathUrl[0] == 'employeeLevel' || pathUrl[0] == 'holiday' || pathUrl[0] == 'projectType'? 'active' : ''}"><jsp:text /></a></li>
+					</security:authorize>
+				</ul>
+			</security:authorize> 
+		</div>
+  		<div class="container">
+			<c:if test="${not empty noticeMessage}">
+	  			<div class="message type${noticeMessage.type }">
+	  				${noticeMessage.message }
+	  			</div>
+			</c:if>
+			
+	  	   <tiles:insertAttribute name="body" />
+		</div>
+		<div id="waiting">Processing ...</div>
+	</body>
+</html>

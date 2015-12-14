@@ -1,0 +1,264 @@
+<html xmlns:jsp="http://java.sun.com/JSP/Page" 
+      xmlns:c="http://java.sun.com/jsp/jstl/core" 
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions" 
+      xmlns:tiles="http://tiles.apache.org/tags-tiles" 
+      xmlns:spring="http://www.springframework.org/tags">  
+
+    <jsp:output doctype-root-element="HTML" doctype-system="about:legacy-compat" />
+    
+    <jsp:directive.page contentType="text/html;charset=UTF-8" />  
+    <jsp:directive.page pageEncoding="UTF-8" /> 
+	
+
+<script type="text/javascript">
+
+   	var url = {
+   		"#tabsProGeneral" : "<c:url value='/project/add' />/" +CONSTANT.PROJECT_STATUS_GENERAL_INFOR,	 
+   		"#tabsProMember" : "<c:url value='/project/add' />/" +CONSTANT.PROJECT_STATUS_PROJECT_MEMBER,	 
+   		"#tabsProBudget" : "<c:url value='/project/add' />/" +CONSTANT.PROJECT_STATUS_BUDGET,
+   		"#tabsProResouce" : "<c:url value='/project/add' />/" +CONSTANT.PROJECT_STATUS_PROJECT_RESOURCE,
+   	};     
+   	
+   	
+   	$( document ).ready( function(){
+		page.init();
+   	} );
+   	
+   	
+	var page = {
+			
+   			init: function(){
+   				/* var isValid  = page.validateData();
+   				$("#btnCreate").prop( 'disabled', !isValid ); */
+   				
+   				$("#grossProfit").val( 0 );
+   				$("#netProfit").val(0);
+   				
+   				page.bindEvent();
+   				
+   			},
+   			
+   			bindEvent:function(){
+   	    		$( "#btnCreate" ).click( function( ){
+   	    			
+   	    			if( tabUtil.hasNext() ){
+   	    				tabUtil.next();
+   	    			}
+   	    			else{
+   	    			 	page.saveAll();
+   	    			}	
+   	    		});
+   	    		
+   	    		$("#btnFinish").on("click", function(){
+   	    			
+   	    			page.saveAll();
+   	    		});
+   	    		
+   	    		$( "#btnCancel" ).click( function( ){
+   	    			page.clearSession();
+   	    			var backUrl = '<c:url value="/project/index"/>';
+   	    			location.href =  backUrl;
+   	    		} );
+   	    		
+   	    		$( tabUtil.tabId ).on({
+   	    			
+   	    			"tabscreate" : function(event, ui){
+						
+   	    				if(ui.panel.selector == "#tabsProMember" || ui.panel.selector == "#tabsProBudget"){
+   	    					var json = $.session.getJSON( session.keys.general );
+   	    					if( json != null ){
+   	    						
+   	    						var isSIProject = page.isSIProject(json.projectTypeID);
+								if(!isSIProject){
+									$("#btnFinish").show();
+								}
+   	    					}
+   	    				}
+   	    				
+   	   	    			if( tabUtil.hasNext() ){
+   		   	 				$( "#btnCreate" ).text( "Next" );
+   		   	 			}
+   		   	 			else{
+   		   	 				$( "#btnCreate" ).text( "Finish" );
+   		   	 			}
+   			   	 	 	$( "body" ).on(  "focusin", ".planmm", function(){
+   		   					/* Allow to input value of Planned MM with minimum value -1. */
+	   						$( this ).autoNumeric({vMin:'-1', aPad: false, aSep: ""});
+   		   				} );
+   	    			}
+   	    		});
+   			},
+   			
+   			validateData: function(){
+   				var general = $.session.getJSON( session.keys.general);
+    			var budget = $.session.getJSON( session.keys.budget );
+    			var bills = $.session.getJSON( session.keys.billing );
+    			var members = $.session.getJSON( session.keys.member_data );
+				var resources = $.session.getJSON( session.keys.resource );
+				
+				return <![CDATA[ general != null && budget != null && bills != null && members != null && resources != null;]]>
+   			},
+   			
+   			clearSession: function(){
+   				$.session.clear();
+   			},
+   			
+   			isSIProject : function(projectTypeId){
+   				var url = "<c:url value='/projectType/'/>" + projectTypeId;
+   				var isSI = false;
+   				$.ajax({
+   					type : "GET",
+   					url : url,
+   					contentType : "application/json",
+   					dataType : "json",
+   					cache : false,
+   					async : false,
+   					success : function(projecType) {
+   						isSI = projecType.flag == CONSTANT.PROJECT_TYPE_SI;
+   					}
+   				});
+
+   				return isSI;
+   			},
+   			
+   			saveAll : function(){
+   				
+   				var isValid = true;
+   				if(typeof memberTab !== 'undefined'){
+   					isValid = memberTab.validate();
+   					memberTab.save();
+   				}
+   				if(typeof budgetPlan !== 'undefined'){
+   					isValid = budgetPlan.validate();
+					budgetPlan.save();
+   				}
+   				if(typeof resourcePlan !== 'undefined'){
+   					isValid = resourcePlan.validate();
+   				}
+   				
+   			 	if( !isValid ){
+   			 		Yuga.dialog.alert( "Invalid Data input." );
+   			 		return;
+   			 	}
+   				
+   				var general = $.session.getJSON( session.keys.general);
+  	    		var budget = $.session.getJSON( session.keys.budget );
+  	    		var bills = $.session.getJSON( session.keys.billing );
+  	    		var members = $.session.getJSON( session.keys.member_data );
+  				var resources = (typeof resourcePlan !== 'undefined') ? resourcePlan.getResourceData() : {};
+  					
+				if( members != null ){
+					 $.each( members, function( index, member ){
+						 var resource;
+						 if(member.groupName == undefined){
+							 resource = resources[ member.employeeID ];
+						 }else{
+							 resource = resources[ member.groupName ];
+						 }
+						if( resource != null ){
+							 var resourcePlans = [];
+								$.each( resource, function( index, value ){
+								 var arr = index.split("-");
+								 var month = arr[ 0 ];
+								 var year = arr[ 1 ];
+								 resourcePlans.push( {
+									 month: month,
+									 year: year,
+									 plannedWorkSize: value
+								 });
+							 });
+						 member.resourcePlans = resourcePlans;
+						}
+					 });
+				}else{
+					Yuga.dialog.alert( "Please input project members." );
+   			 		return;
+				}
+					
+					
+			 	var billArr = [];
+			 	
+			 	if(bills != null){
+
+					$.each( bills, function( index, value ){
+						billArr.push( {
+							billedDate: value.date,
+							billedAmount: value.amount,
+							revenueType: value.revenueType
+						});
+					}); 
+			 	}
+					
+					
+				var project = {};
+				$.extend( true, project, general, budget );
+				project.bills = billArr;
+				project.members = members;
+				
+				
+				$.ajax( {
+					type			: "POST",
+					url				: "<c:url value="/project"/>" ,
+				    contentType		: "application/json",
+				    data			: JSON.stringify( project ),
+					dataType		: "json",
+					cache			: false,
+					success: function( isCreate ){
+						if( isCreate ){
+							$( "#btnCancel" ).trigger( "click" );
+						}
+						else{
+							Yuga.dialog.alert( "Project creation is failed." );
+						}
+					}   
+				} ); 
+   			}
+   		};
+    	
+    	
+    	var session = {
+   			keys: {
+   				general : "general.info",
+   				budget: "budget.info",
+   				billing: "billing.info",
+   				member_text: "member.info",
+   				member_data: "member.data",
+   				resource: "resource.info"
+   			}
+   		};
+    	
+    	var tabUtil = {
+    			
+    			tabId: "#tabs",
+    			
+    			next: function(){
+    				var activeIndex = parseInt( $( tabUtil.tabId ).tabs( "option", "active" ) );
+    				$( tabUtil.tabId ).tabs("option", "active", activeIndex + 1 );
+    			},
+    	
+    			hasNext: function(){
+    				var activeIndex = parseInt( $( tabUtil.tabId ).tabs( "option", "active" ) );
+    				return $( tabUtil.tabId ).find( "#ui-id-" + ( activeIndex + 2) )[ 0 ] != null;
+    			}
+    	};
+    	
+	
+</script>
+	<h3 class="title-project">New Project
+		<div class="btn-bar">
+			<button type="button" class="btn white" id="btnCancel">Cancel</button>
+			<button type="button" class="btn" id="btnCreate">Create</button>
+			<button type="button" class="btn hide" id="btnFinish">Finish</button>
+		</div>
+	</h3>
+	
+	<div id="tabs">
+		<ul>
+			<li><a href="#tabsProGeneral">General Information</a></li>
+			<li><a href="#tabsProMember">Project Member</a></li>
+			<li><a href="#tabsProBudget">Budget Plan</a></li>
+			<li><a href="#tabsProResouce">Resource Plan</a></li>
+		</ul>
+		<tiles:insertAttribute name="projectTabBody" />
+	</div>
+</html>

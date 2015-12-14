@@ -1,0 +1,47 @@
+<html xmlns:jsp="http://java.sun.com/JSP/Page" 
+      xmlns:c="http://java.sun.com/jsp/jstl/core" 
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions" 
+      xmlns:tiles="http://tiles.apache.org/tags-tiles" 
+      xmlns:spring="http://www.springframework.org/tags">  
+
+    <jsp:output doctype-root-element="HTML" doctype-system="about:legacy-compat" />
+    
+    <jsp:directive.page contentType="text/html;charset=UTF-8" />  
+    <jsp:directive.page pageEncoding="UTF-8" /> 
+	
+	<!-- <h3><tiles:insertAttribute name="title" /></h3> -->
+
+<script type="text/javascript">
+
+    	var url = {
+    		"#tabsOrg" : "<c:url value='/organization/index' />",	 
+    		"#tabsEmp" : "<c:url value='/employee/index' />",	 
+    		"#tabsUP" : "<c:url value='/employeeLevel/index' />",	 
+    		"#tabsPT" : "<c:url value='/projectType/index' />" , 
+    		"#tabsHC" : "<c:url value='/holiday/index' />",	 
+    		"#tabsOC" : "<c:url value='/opexCharge/index' />",	 
+    		"#tabsPRT" : "<c:url value='/profitTarget/index' />",
+    		"#tabsRVT" : "<c:url value='/revenueTarget/index' />",
+    		"#tsbExR" : "<c:url value='/exchangeRate/index' />",
+    		"#tabsGPT" : "<c:url value='/gpTarget/index' />"
+    	};     
+	
+</script>
+
+	<div id="tabs">
+		<ul>
+			<li><a href="#tabsOrg">Organization</a></li>
+			<li><a href="#tabsEmp">Employee</a></li>
+			<li><a href="#tabsUP">Unit Price</a></li>
+			<li><a href="#tabsPT">Project Type</a></li>
+			<li><a href="#tabsHC">Holiday</a></li>
+			<li><a href="#tabsOC">Opex Charge</a></li>
+			<li><a href="#tabsPRT">Profit Target</a></li>
+			<!-- <li><a href="#tabsRVT">Revenue Target</a></li> -->
+			<li><a href="#tsbExR">Exchange Rate</a></li>
+			<li><a href="#tabsGPT">GP Target</a></li>
+		</ul>
+		
+		<tiles:insertAttribute name="tab" />
+	</div>
+</html>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	
+	<typeAliases>
+		<typeAlias type="java.lang.Integer" alias="Integer"/>
+		<typeAlias type="java.lang.String" alias="String"/>
+		<typeAlias type="java.util.Map" alias="Map"/>
+		<typeAlias type="java.util.HashMap" alias="HashMap"/>
+		<typeAlias type="com.mcnc.yuga.helper.key.CustomKey" alias="CustomKey"/>
+		<typeAlias type="com.mcnc.yuga.dto.Employee" alias="Employee"/>
+		<typeAlias type="com.mcnc.yuga.dto.ProjectType" alias="ProjectType"/>
+		<typeAlias type="com.mcnc.yuga.dto.Project" alias="Project"/>
+		<typeAlias type="com.mcnc.yuga.dto.MemberShipRequest" alias="Request"/>
+		<typeAlias type="com.mcnc.yuga.dto.Organization" alias="Organization"/>
+		<typeAlias type="com.mcnc.yuga.dto.EmployeeLevel" alias="EmployeeLevel"/>
+		<typeAlias type="com.mcnc.yuga.dto.EmployeeLog" alias="EmployeeLog"/>
+		<typeAlias type="com.mcnc.yuga.dto.Notice" alias="Notice"/>
+		<typeAlias type="com.mcnc.yuga.helper.workbook.EmployeeVO" alias="EmployeeVO"/>
+		<typeAlias type="com.mcnc.yuga.dto.ProjectMember" alias="ProjectMember"/>
+		<typeAlias type="com.mcnc.yuga.dto.Holiday" alias="Holiday"/>
+		<typeAlias type="com.mcnc.yuga.dto.Timecard" alias="Timecard"/>
+		<typeAlias type="com.mcnc.yuga.dto.TimecardProject" alias="TimecardProject"/>
+		<typeAlias type="com.mcnc.yuga.dto.TimecardEntry" alias="TimecardEntry"/>
+		<typeAlias type="com.mcnc.yuga.helper.grid.TCParent" alias="TCParent"/>
+		<typeAlias type="com.mcnc.yuga.dto.ProjectBill" alias="ProjectBill"/>
+		<typeAlias type="com.mcnc.yuga.dto.ProjectResourcePlan" alias="ProjectResourcePlan"/>
+		<typeAlias type="com.mcnc.yuga.dto.UnsubmitRequest" alias="UnsubmitRequest"/>
+		<typeAlias type="com.mcnc.yuga.dto.ProjectByRole" alias="ProjectByRole"/>
+		<typeAlias type="com.mcnc.yuga.dto.OvertimeRequest" alias="OvertimeRequest"/>
+		<typeAlias type="com.mcnc.yuga.dto.ProjectDetail" alias="ProjectDetail"/>
+		<typeAlias type="com.mcnc.yuga.dto.ProjectBudgetActual" alias="ProjectBudgetActual"/>
+		<typeAlias type="com.mcnc.yuga.dto.ProjectResourceActual" alias="ProjectResourceActual"/>
+		<typeAlias type="com.mcnc.yuga.dto.Feed" alias="Feed"/>
+		<typeAlias type="com.mcnc.yuga.dto.ProfitTarget" alias="ProfitTarget"/>		
+		<typeAlias type="com.mcnc.yuga.dto.OpexCharge" alias="OpexCharge"/>
+		<typeAlias type="com.mcnc.yuga.dto.MasterData" alias="MasterData"/>
+		<typeAlias type="com.mcnc.yuga.dto.report.AvailableHoliday" alias="AvailableHoliday"/>
+		<typeAlias type="com.mcnc.yuga.dto.report.LevelCost" alias="LevelCost"/>
+		<typeAlias type="com.mcnc.yuga.dto.report.MonthYear" alias="MonthYear"/>
+		<typeAlias type="com.mcnc.yuga.dto.report.PlanCost" alias="PlanCost"/>
+		<typeAlias type="com.mcnc.yuga.dto.report.ProjectCost" alias="ProjectCost"/>
+		<typeAlias type="com.mcnc.yuga.dto.ExchangeRate" alias="ExchangeRate"/>	
+		<typeAlias type="com.mcnc.yuga.dto.GPTarget" alias="GPTarget"/>
+		<typeAlias type="com.mcnc.yuga.dto.ProjectMemberGroup" alias="ProjectMemberGroup"/>
+		<typeAlias type="com.mcnc.yuga.dto.TimeCardReport" alias="TimeCardReport"/>
+		<typeAlias type="com.mcnc.yuga.dto.PlannedMember" alias="PlannedMember"/>
+		<typeAlias type="com.mcnc.yuga.dto.PlannedMemberGroup" alias="PlannedMemberGroup"/>
+		<typeAlias type="com.mcnc.yuga.dto.OriginalResourcePlan" alias="OriginalResourcePlan"/>
+
+	</typeAliases>
+	
+	<mappers>
+		<mapper resource="mapper/PKDAO.xml"/>
+		<mapper resource="mapper/EmployeeDAO.xml"/>
+		<mapper resource="mapper/ProjectTypeDAO.xml"/>
+		<mapper resource="mapper/ProjectDAO.xml"/>
+		<mapper resource="mapper/RequestDAO.xml"/>
+		<mapper resource="mapper/OrganizationDAO.xml"/>
+		<mapper resource="mapper/EmployeeLevelDAO.xml"/>
+		<mapper resource="mapper/NoticeDAO.xml"/>
+		<mapper resource="mapper/ProjectMemberDAO.xml"/>
+		<mapper resource="mapper/HolidayDAO.xml"/>
+		<mapper resource="mapper/TimecardDAO.xml"/>
+		<mapper resource="mapper/ProjectBillDAO.xml"/>
+		<mapper resource="mapper/ProjectResourcePlanDAO.xml"/>
+		<mapper resource="mapper/UnsubmitRequestDAO.xml"/>
+		<mapper resource="mapper/OvertimeRequestDAO.xml"/>
+		<mapper resource="mapper/ProjectBudgetActualDAO.xml"/>
+		<mapper resource="mapper/ProjectResourceActualDAO.xml"/>
+		<mapper resource="mapper/ProjectCostDAO.xml"/>
+		<mapper resource="mapper/OpexChargeDAO.xml"/>
+		<mapper resource="mapper/TeamProfitDAO.xml"/>
+		<mapper resource="mapper/ProjectProfitDAO.xml"/>
+		<mapper resource="mapper/ProfitTargetDAO.xml"/>		
+		<mapper resource="mapper/MasterDataDAO.xml"/>
+		<mapper resource="mapper/ExchangeRateDAO.xml"/>		
+		<mapper resource="mapper/GPTargetDAO.xml"/>
+		<mapper resource="mapper/ProjectMemberGroupDAO.xml"/>
+		<mapper resource="mapper/PlannedMemberDAO.xml"/>
+		<mapper resource="mapper/PlannedMemberGroupDAO.xml"/>
+		<mapper resource="mapper/RevenueTargetDAO.xml"/>
+		<mapper resource="mapper/OriginalResourcePlanDAO.xml"/>
+	</mappers>
+</configuration>
