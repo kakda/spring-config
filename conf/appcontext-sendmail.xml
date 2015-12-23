@@ -11,9 +11,9 @@
 		<property name="userName" value="${userName}"/>
 		<constructor-arg>
 			<props>
-				<prop key="mail.smtp.host">mail.mcnc.co.kr</prop>
+				<prop key="mail.smtp.host">xxxx</prop>
 				<prop key="mail.smtp.auth">false</prop> 
-				<prop key="mail.smtp.port">25</prop> 
+				<prop key="mail.smtp.port">xxxx</prop> 
 			</props>
 		</constructor-arg>
 		<property name="mailContentList">
