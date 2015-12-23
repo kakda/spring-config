@@ -1,0 +1,60 @@
+#Titles Key
+Titles.key = titleID
+Titles.pattern = TTL
+Titles.digitLength = 2
+
+#Team Key
+Teams.key = teamID
+Teams.pattern = TEM
+Teams.digitLength = 3
+
+#Employee Key
+Employees.key = employeeID
+Employees.pattern = EMP
+Employees.digitLength = 4
+
+#Skills Key
+Skills.key = skillID
+Skills.pattern = SKL
+Skills.digitLength = 3
+
+#ProjectTypes Key
+ProjectTypes.key = projectTypeID
+ProjectTypes.pattern = PJT
+ProjectTypes.digitLength = 3
+
+#Customers Key
+Customers.key = customerID
+Customers.pattern = CUS
+Customers.digitLength = 4
+
+#UnsubmitReasons Key
+UnsubmitReasons.key = unsubmitReasonID
+UnsubmitReasons.pattern = USR
+UnsubmitReasons.digitLength = 3
+
+#Projects Key
+Projects.key = projectID
+Projects.pattern = PRJ
+Projects.digitLength = 4
+
+#Companies Key
+Companies.key = companyID
+Companies.pattern = CPN
+Companies.digitLength = 4
+
+#Roles Key
+Roles.key = roleID
+Roles.pattern = ROL
+Roles.digitLength = 2
+
+#TimeCardUnsubmits Key
+TimeCardUnsubmits.key = timeCardUnsubmitID
+TimeCardUnsubmits.pattern = TCU
+TimeCardUnsubmits.digitLength = 7
+
+
+#HolidayKey
+Holiday.key = holidayId
+Holiday.pattern = HLD
+Holiday.digitLength = 4

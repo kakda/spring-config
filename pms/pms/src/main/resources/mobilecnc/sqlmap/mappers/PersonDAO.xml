@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mobilecnc.employee.service.PersonDAO">
+	
+	<resultMap id="person" type="person">
+        <result property="id" column="ID"/>
+        <result property="name" column="Name"/>
+    </resultMap>
+	
+	<select id="getAllPerson" resultMap="person">  
+		SELECT * FROM Person; 
+	</select>
+	
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mobilecnc.teams.service.TeamDAO">
+	
+	<resultMap id="teamVO" type="TeamVO">
+		<result property="rowNo" column="RowNr"/>
+        <result property="teamID" column="teamID"/>
+        <result property="teamName" column="teamName"/>
+        <result property="description" column="description"/>
+		<result property="createdOn" column="createdOn"/>
+		<result property="createdBy" column="createdBy"/>
+		<result property="createdByName" column="createdByName"/>
+        <result property="entryDate" column="entryDate"/>
+        <result property="entryBy" column="entryBy"/>
+        <result property="lastModifyDate" column="lastModifyDate"/>
+        <result property="lastModifyBy" column="lastModifyBy"/>
+    </resultMap>
+    <resultMap id="team" type="Team">
+        <result property="teamID" column="teamID"/>
+        <result property="teamName" column="teamName"/>
+    </resultMap>
+	
+	<select id="getPagingRecord" resultMap="teamVO"  parameterType="com.mobilecnc.helper.PagingCondition">
+		SELECT  * FROM VTeams
+		WHERE RowNr BETWEEN #{start} AND #{end} ${where} ORDER BY ${sidx} ${sord}</select>
+		
+	
+	<select id="getRecordCount" resultType="int" parameterType="com.mobilecnc.helper.PagingCondition" >
+		SELECT COUNT(teamID) FROM VTeams 
+		<where>
+			<if test="col != null"> 
+				${col} ${oper} ${val}
+			</if>
+		</where>  
+	</select>
+		
+	<select id="deleteTeam" parameterType="java.lang.String">
+		<![CDATA[
+		DELETE FROM Teams
+		WHERE teamID = #{teamID};			
+		]]>
+	</select>
+		
+	<select id="getTeam" parameterType="java.lang.String" resultMap="teamVO">
+		SELECT  * FROM VTeams
+		WHERE teamID = #{teamID};
+	</select>
+	
+	<insert id="insertTeam" >
+		<![CDATA[
+			INSERT INTO Teams
+			VALUES
+			( #{teamID}, #{teamName}, #{description},#{createdOn},#{createdBy},getdate(), #{entryBy}, getdate(), #{lastModifyBy})			
+		]]>
+	</insert>
+	
+	<update id="updateTeam" parameterType="team">
+		UPDATE Teams
+		SET
+			teamName = #{teamName},
+			createdOn= #{createdOn},
+			createdBy = #{createdBy},
+			description = #{description},
+			lastModifyDate = GETDATE(),
+			lastModifyBy = #{lastModifyBy}
+		WHERE
+			teamID = #{teamID}
+	</update>
+	<select id="checkExistName" resultType="int">
+		<![CDATA[
+			SELECT COUNT(teamName) FROM Teams where teamID <> #{teamID} AND teamName LIKE #{teamName}
+		]]>
+	</select>
+	<select id="selectTeamList" resultMap="team">  	
+			SELECT teamID, teamName FROM Teams 
+	</select>
+</mapper>

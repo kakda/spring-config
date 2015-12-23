@@ -1,0 +1,195 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<script type="text/javascript">
+	var autoSearch;
+	$(window).load(function(){
+		autoSearch = $("#autoSearch").attr('checked') ? true : false;
+	});
+	$(document).ready(function() {
+		 $(".btnDeleteSelected").click(function(event){
+			event.preventDefault();
+		 	deleteSelctedRow("#projectList", "<c:url value='/projects/doDelete/' />", 'projectID');
+		 });
+		$("#projectList").jqGrid(
+						{
+							url : "<c:url value='/projects/ajaxGridClose.html'/>",
+							datatype : 'json',
+							mtype : 'GET',
+							colNames : [ '<spring:message code="th.action"/>', '<spring:message code="th.id"/>',
+											'<spring:message code="th.name"/>', '<spring:message code="th.type"/>', '<spring:message code="th.pm"/>', 
+											'<spring:message code="th.customer"/>', '<spring:message code="th.actual_man_month"/>', 
+											'<spring:message code="th.actual_start_date"/>', '<spring:message code="th.actual_end_date"/>'],
+							colModel : [ {
+								name : 'act',
+								index : 'act',
+								width : 25,
+								sortable : false,
+								search: false
+							}, {
+								name : 'projectID',
+								index : 'projectID',
+								width : 20
+							}, {
+								name : 'projectName',
+								index : 'projectName',
+								width : 80
+							}, {
+								name : 'projectTypeName',
+								index : 'projectTypeName',
+								width : 50
+							}
+							, {
+								name : 'employeeName',
+								index : 'employeeName',
+								width : 50
+							}
+							, {
+								name : 'customerName',
+								index : 'customerName',
+								width : 50
+							}
+							/* , {
+								name : 'plannedStartDate',
+								index : 'plannedStartDate',
+								width : 50
+							}
+							, {
+								name : 'plannedEndDate',
+								index : 'plannedEndDate',
+								width : 50
+							} */
+							, {
+								name : 'actualMM',
+								index : 'actualMM',
+								width : 30
+							}
+							, {
+								name : 'actualStartDate',
+								index : 'actualStartDate',
+								width : 30
+							}
+							, {
+								name : 'actualEndDate',
+								index : 'actualEndDate',
+								width : 30
+							}],
+							postData : {},
+							rowNum : 10,
+							rowList : [ 10, 20, 40, 60, 100 ],
+							height : 200,
+							autowidth : true,
+							rownumbers : true,
+							pager : '#projectPage',
+							sortname : 'projectID',
+							viewrecords : true,
+							sortorder : "asc",
+							caption : "",
+							emptyrecords : "Empty records",
+							loadonce : false,
+							multiselect : false,
+							height: 230,
+							loadComplete : function() {
+							},
+							jsonReader : {
+								page : "page",
+								total : "total",
+								records : "records",
+								root : "rows",
+								repeatitems : false
+							},
+							gridComplete : function() {
+
+								 var d = $("#projectList").jqGrid("getDataIDs");
+							        for (var e = 0; e < d.length; e++) {
+							            var f = d[e];
+							            var row = "";
+							            	row += "<button class='btnClose' value='" + f + "' ><spring:message code='button.close' /></button>";
+							            $("#projectList").jqGrid("setRowData", d[e], {
+							                act: row
+							            });
+							        }
+					    	        $(".btnClose").button({
+					    	            icons: {
+					    	                primary: "ui-icon-cancel"
+					    	            }
+					    	        }).click(function(event){
+					    	        	event.preventDefault();
+					    	            var projectID = $("#projectList").jqGrid("getCell", $(this).val(), "projectID");
+					    	            var projectName = $("#projectList").jqGrid("getCell", $(this).val(), "projectName");
+					    	            document.location.href = "<c:url value='/projects/close.html?projectID="+projectID+"&projectName="+projectName+"' />";
+					    	        });
+							}
+						});
+		$("#projectList").jqGrid('navGrid', '#projectPage', {
+			edit : false,
+			add : false,
+			del : false,
+			search : true
+		}, {}, {}, {}, { // search
+			sopt : [ 'cn', 'eq' ],
+			closeOnEscape : true,
+			multipleSearch : false,
+			closeAfterSearch : true,
+			position: "center"
+		});
+		
+		$("#btnSearch").click(function(event){
+			event.preventDefault();	
+			gridReload();
+		});
+		$("#fieldValue").keydown(function(){
+			if(autoSearch){
+				setTimeout(gridReload,500);	
+			} 			
+		});
+		$("#fieldName").change(function(){
+			if(autoSearch){
+				setTimeout(gridReload,500);	
+			}
+		});
+		$("#autoSearch").change(function(){
+			autoSearch = $(this).attr('checked');
+		});
+	});
+	function gridReload(){ 
+		var fieldName =  $("#fieldName").val();
+		var fieldValue =  $("#fieldValue").val();
+		$("#projectList").jqGrid('setGridParam',
+		{
+			url:"<c:url value='/projects/ajaxGridClose.html'/>",
+			page:1,
+			mtype: "GET",
+			search: true,
+			postData: {
+				searchOper: function(){
+					return "cn";
+				},
+				searchField: function(){
+					return fieldName;
+				},
+				searchString: function(){
+					return fieldValue;
+				}
+			}
+		}).trigger("reloadGrid"); 
+	} 
+</script>
+<div class="adminform">
+	<div class="opr">
+		
+		<form action="">
+			<fieldset>
+				<legend><spring:message code='lbl.project_closing'/></legend>
+				<div>
+					<table id="projectList"></table>
+					<div id="projectPage"></div>
+					<div>
+					
+					</div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</div>
+<div class="clr"></div>

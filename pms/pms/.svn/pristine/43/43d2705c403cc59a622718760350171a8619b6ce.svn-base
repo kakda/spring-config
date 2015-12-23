@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mobilecnc.security.service.UserDAO">
+	
+	<resultMap id="userVO" type="UserVO">
+		<result property="employeeID" column="employeeID"/>
+        <result property="userName" column="userName"/>
+        <result property="password" column="password"/>
+        <result property="active" column="active"/>
+		<result property="roleID" column="roleID"/>
+		<result property="roleName" column="roleName"/>
+        <result property="entryDate" column="entryDate"/>
+        <result property="entryBy" column="entryBy"/>
+        <result property="lastModifyDate" column="lastModifyDate"/>
+        <result property="lastModifyBy" column="lastModifyBy"/>
+        <result property="employeeName" column="employeeName"/>
+        <result property="mobilePhone" column="mobilePhone"/>
+        <result property="companyPhone" column="companyPhone"/>
+        <result property="email" column="email"/>
+        <result property="address" column="address"/>
+        <result property="type" column="type"/>
+    </resultMap>
+  	<resultMap id="user" type="User">
+  		<result property="employeeID" column="employeeID"/>
+        <result property="userName" column="userName"/>
+        <result property="active" column="active"/>
+        <result property="roleID" column="roleID"/>
+  	</resultMap>
+	<select id="getUser" parameterType="java.lang.String" resultMap="userVO">
+		SELECT  * FROM VUsers
+		WHERE username = #{userName};
+	</select>
+	<select id="getUserByID" parameterType="java.lang.String" resultMap="userVO">
+		SELECT  * FROM VUsers
+		WHERE employeeID = #{employeeID};
+	</select>
+	<update id="updateUser" parameterType="UserVO">
+		<![CDATA[
+		UPDATE Employees
+		SET
+			employeeName = #{employeeName},
+			mobilePhone = #{mobilePhone},
+			companyPhone =#{companyPhone},
+			email = #{email},
+			address = #{address},
+			lastModifyDate = getdate(), 
+			lastModifyBy = #{lastModifyBy} 
+		WHERE employeeID = #{employeeID};
+		]]>
+	</update>
+	
+	<update id="changePassword" parameterType="UserVO">
+		<![CDATA[ 
+		UPDATE Users
+		SET
+			password = #{password},
+			lastModifyDate = getdate(), 
+			lastModifyBy = #{lastModifyBy}
+		WHERE employeeID = #{employeeID}
+		]]>
+	</update>
+	<select id="getUsers" resultMap="userVO">
+		SELECT U.employeeID,U.username,U.active,R.roleName FROM 
+		Users U LEFT JOIN Roles R ON U.roleID=R.roleID
+		
+	</select>
+	
+	<select id="getPagingRecord" resultMap="userVO"
+		parameterType="com.mobilecnc.helper.PagingCondition">
+		
+		SELECT * FROM
+		(SELECT ROW_NUMBER() OVER (ORDER BY U.employeeID) RowNr, U.employeeID,U.username,U.active,R.roleName FROM 
+		Users U LEFT JOIN Roles R ON U.roleID=R.roleID
+		<where>
+			<if test="col != null">
+				${where}
+			</if>
+		</where>
+		) AS VTables
+		WHERE RowNr BETWEEN #{start} AND #{end}  
+		ORDER BY ${sidx} ${sord}
+
+	</select>
+
+	<select id="getRecordCount" resultType="int"
+		parameterType="com.mobilecnc.helper.PagingCondition">
+		SELECT COUNT(U.employeeID) FROM Users U LEFT JOIN Roles R ON U.roleID=R.roleID
+		<where>
+			<if test="#{col} != null">
+				${col} ${oper} ${val}
+			</if>
+		</where>
+	</select>
+	
+	<update id="updateUserStatus" statementType="CALLABLE">
+		{ CALL SP_UpdateUserActiveStatus(#{activeList},#{inActiveList},#{userID})}
+	</update>
+</mapper>

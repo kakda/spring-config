@@ -1,0 +1,32 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+ 
+<!-- 	<bean id="ExcelExport" -->
+<!-- 	   	class="com.mobilecnc.excel.service.ExcelExport"> -->
+<!-- 	</bean> -->
+    
+    <bean id="reportTimeCardDetailExcelView" class="com.mobilecnc.excelView.ReportTimeCardDetailExcelView" />
+    <bean id="reportTimeCardDetailPDF" class="com.mobilecnc.excelView.ReportTimeCardDetailPDF"/>
+    <bean id="reportTimeCardByBillableExcelView" class="com.mobilecnc.excelView.ReportTimeCardByBillableExcelView"/>
+    <bean id="reportTimeCardByBillablePDF" class="com.mobilecnc.excelView.ReportTimeCardByBillablePDF"/>
+    
+    
+    <bean id="reportTimeCardOfTeamExcelView" class="com.mobilecnc.excelView.ReportTimeCardOfTeamExcelView" />
+    <bean id="reportTimeCardOfTeamPDFView" class="com.mobilecnc.excelView.ReportTimeCardOfTeamPDFView" />
+    
+    
+    <bean id="reportTimeCardOfProjectExcelView" class="com.mobilecnc.excelView.ReportTimeCardOfProjectExcelView" />
+    <bean id="reportTimeCardOfProjectPDFView" class="com.mobilecnc.excelView.ReportTimeCardOfProjectPDFView"/>
+    
+    <bean id="reportProjectExcelView" class="com.mobilecnc.excelView.ReportProjectExcelView" />
+    <bean id="reportProjectPDFView" class="com.mobilecnc.excelView.ReportProjectPDFView"/>
+    
+    <bean id="reportEmployeeExcelView" class="com.mobilecnc.excelView.ReportEmployeeExcelView"/>
+    <bean  id="reportEmployeePDFView" class="com.mobilecnc.excelView.ReportEmployeePDFView"/>
+    
+    <bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
+    	<property name="order" value="1" />
+    </bean>
+</beans>

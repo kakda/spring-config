@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report2" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true" pdfFontName="Times-Roman"/>
+	<style name="Detail" fontName="Arial Unicode MS" fontSize="12" pdfFontName="Arial Unicode MS" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 1]]></conditionExpression>
+			<style mode="Opaque" backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="projectTypeName" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="customerName" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="employeeName" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="actualYear" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[IF $P{actualYear} = ''
+        BEGIN
+            SELECT
+                 VProjectList."RowNr" AS VProjectList_RowNr,
+                 VProjectList."projectID" AS VProjectList_projectID,
+                 VProjectList."projectName" AS VProjectList_projectName,
+                 VProjectList."projectTypeName" AS VProjectList_projectTypeName,
+                 VProjectList."employeeName" AS VProjectList_employeeName,
+                 VProjectList."customerName" AS VProjectList_customerName,
+                 VProjectList."actualMM" AS VProjectList_actualMM,
+                 VProjectList."actualStartDate" AS VProjectList_actualStartDate,
+                 VProjectList."actualEndDate" AS VProjectList_actualEndDate,
+                 VProjectList."plannedStartDate" AS VProjectList_plannedStartDate,
+                 VProjectList."plannedEndDate" AS VProjectList_plannedEndDate
+            FROM "dbo"."VProjectList" VProjectList
+            WHERE   VProjectList."projectTypeName" LIKE N'%'+ $P{projectTypeName} + '%'
+                    AND VProjectList."customerName" LIKE N'%'+ $P{customerName} + '%'
+                    AND VProjectList."employeeName" LIKE N'%'+ $P{employeeName} + '%'
+
+         END
+         ELSE
+            SELECT
+                 VProjectList."RowNr" AS VProjectList_RowNr,
+                 VProjectList."projectID" AS VProjectList_projectID,
+                 VProjectList."projectName" AS VProjectList_projectName,
+                 VProjectList."projectTypeName" AS VProjectList_projectTypeName,
+                 VProjectList."employeeName" AS VProjectList_employeeName,
+                 VProjectList."customerName" AS VProjectList_customerName,
+                 VProjectList."actualMM" AS VProjectList_actualMM,
+                 VProjectList."actualStartDate" AS VProjectList_actualStartDate,
+                 VProjectList."actualEndDate" AS VProjectList_actualEndDate,
+                 VProjectList."plannedStartDate" AS VProjectList_plannedStartDate,
+                 VProjectList."plannedEndDate" AS VProjectList_plannedEndDate
+            FROM "dbo"."VProjectList" VProjectList
+            WHERE   VProjectList."projectTypeName" LIKE N'%'+ $P{projectTypeName} + '%'
+                    AND VProjectList."customerName" LIKE N'%'+ $P{customerName} + '%'
+                    AND VProjectList."employeeName" LIKE N'%'+ $P{employeeName} + '%'
+                    AND Year(VProjectList."actualStartDate") LIKE '%'+ $P{actualYear}+ '%']]>
+	</queryString>
+	<field name="VProjectList_RowNr" class="java.lang.Long"/>
+	<field name="VProjectList_projectName" class="java.lang.String"/>
+	<field name="VProjectList_projectTypeName" class="java.lang.String"/>
+	<field name="VProjectList_employeeName" class="java.lang.String"/>
+	<field name="VProjectList_customerName" class="java.lang.String"/>
+	<field name="VProjectList_actualMM" class="java.lang.Short"/>
+	<field name="VProjectList_actualStartDate" class="java.sql.Timestamp"/>
+	<field name="VProjectList_actualEndDate" class="java.sql.Timestamp"/>
+	<field name="VProjectList_plannedStartDate" class="java.sql.Timestamp"/>
+	<field name="VProjectList_plannedEndDate" class="java.sql.Timestamp"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="217" splitType="Stretch">
+			<staticText>
+				<reportElement style="SubTitle" x="2" y="83" width="800" height="28" forecolor="#736343"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="22" isBold="true" pdfFontName="Times-Roman"/>
+				</textElement>
+				<text><![CDATA[Project Report]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="124" width="37" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$P{projectTypeName}.isEmpty() && $V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<text><![CDATA[Type:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="167" width="48" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$P{employeeName}.isEmpty() && $V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<text><![CDATA[PM:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="8" y="145" width="48" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$P{customerName}.isEmpty() && $V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<text><![CDATA[Customer:]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="Detail" positionType="Float" x="49" y="124" width="163" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$P{projectTypeName}.isEmpty() && $V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{projectTypeName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Detail" x="59" y="167" width="270" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$P{employeeName}.isEmpty() && $V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{employeeName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Detail" x="59" y="145" width="270" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$P{customerName}.isEmpty() && $V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{customerName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="8" y="189" width="100" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$P{actualYear}.isEmpty() && $V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<text><![CDATA[Actual Start Year:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="112" y="189" width="100" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$P{actualYear}.isEmpty() && $V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{actualYear}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="55" width="801" height="14"/>
+				<textElement textAlignment="Right">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[www.mcnc.co.kr]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="53" width="803" height="1" forecolor="#3399FF"/>
+			</line>
+			<image>
+				<reportElement x="2" y="0" width="172" height="52"/>
+				<imageExpression class="java.lang.String"><![CDATA["/mobilecnc/reports/mobilecnc.png"]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement style="Column header" x="0" y="0" width="32" height="18" forecolor="#736343"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="35" y="0" width="148" height="18" forecolor="#736343"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Project]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="183" y="0" width="65" height="18" forecolor="#736343"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="249" y="0" width="79" height="18" forecolor="#736343"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PM]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="328" y="0" width="79" height="18" forecolor="#736343"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Customer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="409" y="0" width="63" height="18" forecolor="#736343"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Men Month]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="474" y="0" width="79" height="18" forecolor="#736343"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Actual Start]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="553" y="0" width="79" height="18" forecolor="#736343"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Actual End]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="632" y="0" width="79" height="18" forecolor="#736343"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Planned Start]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Column header" x="711" y="0" width="79" height="18" forecolor="#736343"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Planned End]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<frame>
+				<reportElement style="Row" mode="Opaque" x="0" y="0" width="797" height="18"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" positionType="Float" x="0" y="0" width="32" height="18"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" positionType="Float" x="35" y="0" width="148" height="18"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{VProjectList_projectName}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" positionType="Float" x="183" y="0" width="65" height="18"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{VProjectList_projectTypeName}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" positionType="Float" x="249" y="0" width="79" height="18"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{VProjectList_employeeName}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" positionType="Float" x="328" y="0" width="79" height="18"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{VProjectList_customerName}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement style="Detail" positionType="Float" x="409" y="0" width="63" height="18"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Short"><![CDATA[$F{VProjectList_actualMM}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="474" y="0" width="79" height="18"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{VProjectList_actualStartDate}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="553" y="0" width="79" height="18"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{VProjectList_actualEndDate}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="632" y="0" width="79" height="18"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{VProjectList_plannedStartDate}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="711" y="0" width="79" height="18"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+					<textFieldExpression class="java.util.Date"><![CDATA[$F{VProjectList_plannedEndDate}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="7" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="25" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="0" width="802" height="25" forecolor="#D0B48E" backcolor="#CCCCCC"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="757" y="3" width="40" height="20" forecolor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="677" y="3" width="80" height="20" forecolor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement style="Column header" x="2" y="3" width="197" height="20" forecolor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

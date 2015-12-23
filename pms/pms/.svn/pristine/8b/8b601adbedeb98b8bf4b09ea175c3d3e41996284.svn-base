@@ -1,0 +1,169 @@
+;(function($){
+/**
+ * jqGrid English Translation
+ * Tony Tomov tony@trirand.com
+ * http://trirand.com/blog/
+ * Dual licensed under the MIT and GPL licenses:
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.gnu.org/licenses/gpl.html
+**/
+$.jgrid = $.jgrid || {};
+$.extend($.jgrid,{
+	defaults : {
+		recordtext: "មើល {0} - {1} ក្នុង {2}",
+		emptyrecords: "គ្មានទិន្នន័យសំរាប់បង្ហាញ",
+		loadtext: "កំពុងដំនើរការ....",
+		pgtext : "ទំព័រ {0} ក្នុង {1}"
+	},
+	search : {
+		caption: "ស្វែងរក...",
+		Find: "រក",
+		Reset: "ធ្វើសាឡើងវិញ",
+		odata : ['ស្មើ', 'មិនស្មើ', 'តិចជាង', 'តិចជាង រឺស្មើ','ធំជាង','ធំជាង រឺស្មើ', 'ចាប់ផ្តើមដោយ','មិនចាប់ផ្តើមដោយ','នៅក្នុង','មិននៅក្នុង','បញ្ចប់ដោយ','មិនបញ្ចប់ដោយ','មាន', 'មិនមាន'],
+		groupOps: [	{ op: "និង", text: "ទាំងអស់" },	{ op: "រឺ",  text: "ខ្លះៗ" }	],
+		matchText: " ផ្គូរផ្គង",
+		rulesText: " ច្បាប់"
+	},
+	edit : {
+		addCaption: "បន្ថែមជួរដេក",
+		editCaption: "កែប្រែជួរដេក",
+		bSubmit: "ស្នើររក្សារទុក",
+		bCancel: "ចាកចេញ",
+		bClose: "បិទ",
+		saveData: "ទិន្នន័យត្រូវរក្សារទុក! រក្សារទុក?",
+		bYes : "យល់ព្រម",
+		bNo : "មិនយល់ព្រម",
+		bExit : "ចាកចេញ",
+		msg: {
+			required:"ទីតាំងត្រូវបំពេញ",
+			number:"សូមបំពេញលេខអោយបានត្រឹមត្រូវ",
+			minValue:"តំលៃត្រូវធំជាងរឺស្មើនឹង  ",
+			maxValue:"តំលៃត្រូវតិចជាងរឺស្មើនឹង",
+			email: "អ៊ីមែលមិនត្រឹមត្រូវ",
+			integer: "សូមបំពេញចំនួនគត់អោយបានត្រឹមត្រូវ",
+			date: "សូមបំពេញការបរិច្ឆេទអោយបានត្រឹមត្រូវ",
+			url: "URL មិនត្រឹមត្រូវ. URL ត្រូវចាប់ផ្តើមដោយ ('http://' or 'https://')",
+			nodefined : "​ មិនទាន់បានកំនត់",
+			novalue : " មិនមានទិន្នន័យឆ្លើយតប!",
+			customarray : "Custom function គួរឆ្លើយតបជា array!",
+			customfcheck : "Custom function គួរបង្ហាញជា custom checking!"
+
+		}
+	},
+	view : {
+		caption: "មើលទិន្នន័យ",
+		bClose: "បិទ"
+	},
+	del : {
+		caption: "លុប",
+		msg: "លុបជួរដេកដែរបានជ្រើសរើស?",
+		bSubmit: "លុប",
+		bCancel: "ចាកចេញ"
+	},
+	nav : {
+		edittext: "",
+		edittitle: "កែប្រែជួរដេកដែរបានជ្រើសរើស",
+		addtext:"",
+		addtitle: "បន្ថែមជួរដេកថ្មី",
+		deltext: "",
+		deltitle: "លុបជួរដែលបានជ្រើសរើស",
+		searchtext: "",
+		searchtitle: "ស្វែងរកទិន្នន័យ",
+		refreshtext: "",
+		refreshtitle: "បង្ហាញម្តងទៀត",
+		alertcap: "ព្រមាន",
+		alerttext: "សូមរង់ចាំ កំពុងដំនើរការ",
+		viewtext: "",
+		viewtitle: "សូមបើកមើល ជួរដែលជ្រើសរើស"
+	},
+	col : {
+		caption: "ជ្រើសរើស ជួរឈរ",
+		bSubmit: "ត្រឹមត្រូវ",
+		bCancel: "ចាកចេញ"
+	},
+	errors : {
+		errcap : "មានកំហុស",
+		nourl : "មិនបានបញ្ចូល URL",
+		norecords: "គ្មាទិន្នន័យដើម្បីដំនើរការ",
+		model : "ចំនួន colNames <> colModel!"
+	},
+	formatter : {
+		integer : {thousandsSeparator: ",", defaultValue: '0'},
+		number : {decimalSeparator:".", thousandsSeparator: ",", decimalPlaces: 2, defaultValue: '0.00'},
+		currency : {decimalSeparator:".", thousandsSeparator: ",", decimalPlaces: 2, prefix: "", suffix:"", defaultValue: '0.00'},
+		date : {
+			dayNames:   [
+				'អា','ច','អ','ព','ព្រ','សុ','ស',
+				'អាទិត្យ', 'ច័ន្ទ', 'អង្គារ', 'ពុធ', 'ព្រហស្បតិ័', 'សុក្រ', 'សៅរ័'
+			],
+			monthNames: [
+				'មក', 'កុ', 'មិ', 'មេ', 'ឧ', 'មិថុ','កក្ក', 'សី', 'កញ្ញ', 'តុ', 'វិ', 'ធ',
+				'មករា','កុម្ភៈ','មីនា','មេសា','ឧសភា','មិថុនា','កក្កដា','សីហា','កញ្ញា','តុលា','វិច្ចិកា','ធ្នូ'
+			],
+			AmPm : ["am","pm","AM","PM"],
+			S: function (j) {return j < 11 || j > 13 ? ['st', 'nd', 'rd', 'th'][Math.min((j - 1) % 10, 3)] : 'th';},
+			srcformat: 'Y-m-d',
+			newformat: 'n/j/Y',
+			masks : {
+				// see http://php.net/manual/en/function.date.php for PHP format used in jqGrid
+				// and see http://docs.jquery.com/UI/Datepicker/formatDate
+				// and https://github.com/jquery/globalize#dates for alternative formats used frequently
+				// one can find on https://github.com/jquery/globalize/tree/master/lib/cultures many
+				// information about date, time, numbers and currency formats used in different countries
+				// one should just convert the information in PHP format
+				ISO8601Long:"Y-m-d H:i:s",
+				ISO8601Short:"Y-m-d",
+				// short date:
+				//    n - Numeric representation of a month, without leading zeros
+				//    j - Day of the month without leading zeros
+				//    Y - A full numeric representation of a year, 4 digits
+				// example: 3/1/2012 which means 1 March 2012
+				ShortDate: "n/j/Y", // in jQuery UI Datepicker: "M/d/yyyy"
+				// long date:
+				//    l - A full textual representation of the day of the week
+				//    F - A full textual representation of a month
+				//    d - Day of the month, 2 digits with leading zeros
+				//    Y - A full numeric representation of a year, 4 digits
+				LongDate: "l, F d, Y", // in jQuery UI Datepicker: "dddd, MMMM dd, yyyy"
+				// long date with long time:
+				//    l - A full textual representation of the day of the week
+				//    F - A full textual representation of a month
+				//    d - Day of the month, 2 digits with leading zeros
+				//    Y - A full numeric representation of a year, 4 digits
+				//    g - 12-hour format of an hour without leading zeros
+				//    i - Minutes with leading zeros
+				//    s - Seconds, with leading zeros
+				//    A - Uppercase Ante meridiem and Post meridiem (AM or PM)
+				FullDateTime: "l, F d, Y g:i:s A", // in jQuery UI Datepicker: "dddd, MMMM dd, yyyy h:mm:ss tt"
+				// month day:
+				//    F - A full textual representation of a month
+				//    d - Day of the month, 2 digits with leading zeros
+				MonthDay: "F d", // in jQuery UI Datepicker: "MMMM dd"
+				// short time (without seconds)
+				//    g - 12-hour format of an hour without leading zeros
+				//    i - Minutes with leading zeros
+				//    A - Uppercase Ante meridiem and Post meridiem (AM or PM)
+				ShortTime: "g:i A", // in jQuery UI Datepicker: "h:mm tt"
+				// long time (with seconds)
+				//    g - 12-hour format of an hour without leading zeros
+				//    i - Minutes with leading zeros
+				//    s - Seconds, with leading zeros
+				//    A - Uppercase Ante meridiem and Post meridiem (AM or PM)
+				LongTime: "g:i:s A", // in jQuery UI Datepicker: "h:mm:ss tt"
+				SortableDateTime: "Y-m-d\\TH:i:s",
+				UniversalSortableDateTime: "Y-m-d H:i:sO",
+				// month with year
+				//    Y - A full numeric representation of a year, 4 digits
+				//    F - A full textual representation of a month
+				YearMonth: "F, Y" // in jQuery UI Datepicker: "MMMM, yyyy"
+			},
+			reformatAfterEdit : false
+		},
+		baseLinkUrl: '',
+		showAction: '',
+		target: '',
+		checkbox : {disabled:true},
+		idName : 'id'
+	}
+});
+})(jQuery);

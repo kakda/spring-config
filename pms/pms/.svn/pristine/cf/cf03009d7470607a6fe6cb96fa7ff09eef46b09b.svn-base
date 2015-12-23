@@ -1,0 +1,253 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<c:url value="/projects/reports/download.html" var="downloadUrl"/>
+<c:url value="/reports/download/token.html" var="downloadTokenUrl"/>
+<c:url value="/reports/download/progress.html" var="downloadProgressUrl"/>
+
+<script type="text/javascript">
+	var autoSearch;
+	$(window).load(function(){
+		autoSearch = $("#autoSearch").attr('checked') ? true : false;
+	});
+	$(document).ready(function() {
+		
+		$('#fieldValue').val( getCookie('fieldValue') == ""? $('#fieldValue').val() : getCookie('fieldValue') );
+     	$("#fieldName").val( getCookie('fieldName') == "" ? $('#fieldName').val() : getCookie('fieldName') );
+		$('#fieldName').trigger("liszt:updated");
+		deleteAllOption();
+		
+		
+		$('#projectTypeID, #customerID, #employeeID').find('option').each(function(){
+			var e = $(this);
+			var txt = $.trim(e.text());
+			e.val(txt);
+		});
+		
+		
+		 $(".btnDeleteSelected").click(function(event){
+			event.preventDefault();
+		 	deleteSelctedRow("#projectList", "<c:url value='/projects/doDelete/' />", 'projectID');
+		 });
+
+
+		   
+				 
+		$("#projectList").jqGrid(
+						{
+							url : "<c:url value='/projects/ajaxGrid.html'/>",
+							datatype : 'json',
+							mtype : 'GET',
+							colNames : [ '<spring:message code="th.action"/>', '<spring:message code="th.id"/>',
+									'<spring:message code="th.name"/>', '<spring:message code="th.type"/>', '<spring:message code="th.pm"/>', 
+									'<spring:message code="th.customer"/>', '<spring:message code="th.actual_man_month"/>', 
+									'<spring:message code="th.actual_start_date"/>', '<spring:message code="th.actual_end_date"/>'],
+							colModel : [ {
+								name : 'act',
+								index : 'act',
+								width : 30,
+								sortable : false,
+								search: false,
+							}, {
+								name : 'projectID',
+								index : 'projectID',
+								width : 20,
+							}, {
+								name : 'projectName',
+								index : 'projectName',
+								width : 80
+							}, {
+								name : 'projectTypeName',
+								index : 'projectTypeName',
+								width : 50
+							}
+							, {
+								name : 'employeeName',
+								index : 'employeeName',
+								width : 50
+							}
+							, {
+								name : 'customerName',
+								index : 'customerName',
+								width : 50
+							}
+							, {
+								name : 'actualMM',
+								index : 'actualMM',
+								width : 30
+							}
+							, {
+								name : 'actualStartDate',
+								index : 'actualStartDate',
+								width : 30
+							}
+							, {
+								name : 'actualEndDate',
+								index : 'actualEndDate',
+								width : 30
+							}],
+							postData : {},
+							rowNum : 10,
+							rowList : [ 10, 20, 40, 60, 100 ],
+							height : 200,
+							autowidth : true,
+							rownumbers : true,
+							pager : '#projectPage',
+							sortname : 'projectID',
+							viewrecords : true,
+							sortorder : "asc",
+							caption : "",
+							emptyrecords : "Empty records",
+							loadonce : false,
+							multiselect : true,
+							height: 230,
+							
+							page : getPageNumber("pageNumber"),
+							
+							loadComplete : function() {
+								
+							},
+							jsonReader : {
+								page : "page",
+								total : "total",
+								records : "records",
+								root : "rows",
+								repeatitems : false
+							},
+							gridComplete : function() {
+								
+					            gridAction("#projectList", "<c:url value='/projects/' />", "projectID", true, true, true);
+
+					            setCookie("pageNumber", $('#projectList').getGridParam('page'));
+					            
+// 					            setCookie("fieldValue",$('#fieldValue').val());
+// 					            setCookie("fieldName",$('#fieldName').val());
+					        },
+					        beforeProcessing : function(data, status, xhr){
+// 					    		if($('#fieldValue').val() !==""){
+// 					            	$('#fieldValue').keyup();
+// 					            	return false;
+// 					            }
+					        }
+						});
+		$("#projectList").jqGrid('navGrid', '#projectPage', {
+			edit : false,
+			add : false,
+			del : false,
+			search : false
+		}, {}, {}, {}, { // search
+			sopt : [ 'cn', 'eq' ],
+			closeOnEscape : true,
+			multipleSearch : false,
+			closeAfterSearch : true,
+			position: "center"
+		});
+
+		$("#btnSearch").click(function(event){
+			event.preventDefault();	
+			gridReload();
+		});
+		$("#fieldValue").keyup(function(){
+			if(autoSearch){
+				setTimeout(gridReload,500);	
+			} 			
+		});
+		$("#fieldName").change(function(){
+			if(autoSearch){
+				setTimeout(gridReload,500);	
+			}
+		});
+		$("#autoSearch").change(function(){
+			autoSearch = $(this).attr('checked');
+		});
+		
+	/* 	 $("#projectList").jqGrid_setLanguage({
+			    "pre_total":"total", // word "total" on the bottom right of the grid when paging enable
+			    "post_total":"rows", // word "rows" on the bottom right of the grid when paging enable
+			    "create":"create record", // the description of the create icon when mouseover
+			    "update":"update record", // the description of the update icon when mouseover
+			    "delete":"delete record(s)", // the description of the delete icon when mouseover
+			    "copy":"copy record", // the description of the copy icon when mouseover
+			    "search":"search record(s)", // the description of the search icon when mouseover
+			    "refresh":"refresh" // the description of the refresh icon when mouseover
+				,"View":"v"    
+			    }); */
+		
+	});
+	
+	function gridReload(){ 
+		var fieldName =  $("#fieldName").val();
+		var fieldValue =  $("#fieldValue").val();
+		
+		$("#projectList").jqGrid('setGridParam',
+		{
+			url:"<c:url value='/projects/ajaxGrid.html'/>",
+			page:1,
+			mtype: "GET",
+			search: true,
+			postData: {
+				searchOper: function(){
+					return "cn";
+				},
+				searchField: function(){
+					return fieldName;
+				},
+				searchString: function(){
+					return fieldValue;
+				}
+			}
+		}).trigger("reloadGrid"); 
+	} 
+
+</script>
+
+<div class="adminform">
+	<div class="opr">
+		<div class="break-crumbs">
+			<a href="<c:url value='/projects/add.html' />"><img src="<c:url value='/images/icon/add.png' />" align="absmiddle" alt="" /><spring:message code="lbl.add_new_project"/></a>
+		</div>
+		<form action="" id="frm1">
+		<fieldset>
+			<legend><spring:message code="lbl.filter"/></legend>
+			<table class="form" >
+				<tr>
+					<td class="input">
+						<input type="text" class="textfield" id="fieldValue" />
+					</td>
+					<td>
+						<select id="fieldName" class="select-single" style="width: 200px">
+							<option value="projectName"><spring:message code="th.name"/></option>
+							<option value="projectTypeName"><spring:message code="th.type"/></option>
+							<option value="employeeName"><spring:message code="th.pm"/></option>
+							<option value="customerName"><spring:message code="th.customer"/></option>
+							<option value="projectID"><spring:message code="th.id"/></option>
+						</select>
+					</td>
+					<td>
+						<input type="checkbox" id="autoSearch" checked="checked" />
+					</td>
+					<td>
+						<label for="autoSearch"><spring:message code="lbl.auto"/></label>
+					</td>
+					<td>
+						<button id="btnSearch" class="search"><spring:message code="button.search"/></button>
+					</td>
+				</tr>
+			</table> 
+		</fieldset>
+		</form>
+		<form action="">
+			<fieldset>
+				<legend><spring:message code="lbl.project_list"/></legend>
+				<div>
+					<table id="projectList"></table>
+					<div id="projectPage"></div>
+					<div>
+					<button class="btnDeleteSelected delete"><spring:message code="button.delete"/></button>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</div>
+<div class="clr"></div>

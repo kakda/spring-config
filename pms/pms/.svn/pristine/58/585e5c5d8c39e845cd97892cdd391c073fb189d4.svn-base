@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mobilecnc.timeCardUnsubmits.service.TimeCardUnsubmitDAO">
+	<resultMap id="timeCardUnsubmit" type="TimeCardUnsubmit">
+        <result property="timeCardUnsubmitID" column="timeCardUnsubmitID"/>
+        <result property="UnsubmitReasonID" column="UnsubmitReasonID"/>
+        <result property="employeeID" column="employeeID"/>
+        <result property="approvedID" column="approvedID"/>
+        <result property="otherReason" column="otherReason"/>
+        <result property="entryDate" column="entryDate"/>
+        <result property="entryBy" column="entryBy"/>
+    </resultMap>
+	
+	<insert id="insertTimeCardUnsubmit" >
+		<![CDATA[
+			INSERT INTO TimeCardUnsubmits
+			(UnsubmitReasonID, employeeID, approvedID, otherReason, entryDate, entryBy)
+			VALUES
+			(#{UnsubmitReasonID}, #{employeeID}, #{approvedID}, #{otherReason}, getdate(), #{entryBy})			
+		]]>
+	</insert>
+</mapper>

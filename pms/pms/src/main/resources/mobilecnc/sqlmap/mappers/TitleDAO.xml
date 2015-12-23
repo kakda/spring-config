@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mobilecnc.titles.service.TitleDAO">
+	
+	<resultMap id="title" type="Title">
+        <result property="titleID" column="titleID"/>
+        <result property="titleName" column="titleName"/>
+        <result property="description" column="description"/>
+        <result property="grade" column="grade"/>
+        <result property="entryDate" column="entryDate"/>
+        <result property="entryBy" column="entryBy"/>
+        <result property="lastModifyDate" column="lastModifyDate"/>
+        <result property="lastModifyBy" column="lastModifyBy"/>
+    </resultMap>
+	
+	
+	<select id="getAllTitles" resultMap="title">  
+		SELECT * FROM Titles; 
+	</select>
+	
+	
+	<!--Sambath Kakda-->
+	
+	<select id="getPagingRecord" resultMap="title"  parameterType="com.mobilecnc.helper.PagingCondition">
+		<if test="col == null">
+			SELECT  titleID, titleName, description, entryDate, entryBy, lastModifyDate, lastModifyBy
+			FROM VTitles WHERE RowNr BETWEEN #{start} AND #{end} ORDER BY ${sidx} ${sord}
+		</if>
+		<if test="col != null">
+			SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY titleID) RowNr, titleID, titleName, description, entryDate, entryBy, lastModifyDate, lastModifyBy
+			FROM Titles WHERE ${where} ) AS VTables WHERE RowNr BETWEEN #{start} AND #{end} ORDER BY ${sidx} ${sord}
+		</if>
+	</select>
+	
+	
+	<select id="getRecordCount" resultType="int" parameterType="com.mobilecnc.helper.PagingCondition" >
+			SELECT COUNT(titleID) FROM Titles 
+			<where>
+				<if test="col != null"> 
+					${col} ${oper} ${val}
+				</if>
+			</where> 
+	</select>
+		
+	<select id="deleteTitle" parameterType="java.lang.String">
+		<![CDATA[
+		DELETE FROM Titles
+		WHERE titleID = #{titleID};			
+		]]>
+	</select>
+		
+	<!--Sambath Kakda-->
+		
+		
+	<select id="getTitle" parameterType="java.lang.String" resultMap="title">
+		SELECT * FROM Titles
+		WHERE titleID = #{titleID};
+	</select>
+	
+	<insert id="insertTitle" >
+		<![CDATA[
+			INSERT INTO Titles
+			(titleID, titleName, description, grade, entryDate, entryBy, lastModifyBy, lastModifyDate)
+			VALUES
+			( #{titleID}, #{titleName}, #{description}, #{grade}, getdate(), #{entryBy}, #{lastModifyBy}, getdate())			
+		]]>
+	</insert>
+	
+	<update id="updateTitle" parameterType="title">
+		UPDATE Titles
+		SET
+			titleName = #{titleName},
+			grade = #{grade},
+			description = #{description},
+			lastModifyDate = GETDATE(),
+			lastModifyBy = #{lastModifyBy}
+		WHERE
+			titleID = #{titleID}
+	</update>
+	<select id="checkExisName" resultType="int">
+		<![CDATA[
+			SELECT COUNT(titleName) FROM Titles where titleID <> #{titleID} AND titleName LIKE #{titleName}
+		]]>
+	</select>
+	
+	<select id="selectTitleList" resultMap="title">  	
+			SELECT titleID, titleName FROM Titles 
+	</select>
+</mapper>

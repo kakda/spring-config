@@ -1,0 +1,61 @@
+<!-- Chamroeun -->
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+
+<script type="text/javascript">
+	$(document).ready(function() {	
+		$("#frmAdd").validationEngine();
+	});
+</script>
+
+<div class="adminform">
+	<div class="break-crumbs">
+		<a href="<c:url value='/companies/index.html' />"><img src="<c:url value='/images/icon/list.png' />" align="absmiddle" alt="" /><spring:message code='lbl.company_list' /></a>
+	</div>
+	<div class="opr">
+		<form action="<c:url value='/companies/doAdd.html' />" id='frmAdd'
+			method="post">
+			<fieldset>
+				<legend><spring:message code='lbl.add_new_company' /></legend>
+				<table class="form" cellspacing="0" cellpadding="0">		
+					<tr>
+						<td class="label"><label for="companyName"><spring:message code='th.company_name' /></label><span class="required">*</span></td>
+						<td class="input"><input id="companyName" name="companyName"
+							class="textfield validate[required, maxSize[50]]"
+							type="text" /></td>
+						<td class="label"></td>
+						<td class="input"></td>
+					</tr>
+					<tr>
+						<td class="label"><label for="companyPhone"><spring:message code='lbl.company_phone' /></label></td>
+						<td class="input"><input id="companyPhone" name="companyPhone"
+							class="textfield validate[maxSize[15]]"
+							type="text" /></td>
+						<td class="label"><label for="email"><spring:message code='th.email' /></label><span class="required">*</span></td>
+						<td class="input"><input id="email" name="email"
+							class="textfield validate[required, custom[email], maxSize[50]]"
+							type="text" /></td>
+					</tr>
+					<tr style="vertical-align: top;">
+						<td class="label"><label for="address"><spring:message code='lbl.address' /></label></td>
+						<td class="input" colspan="3"><textarea name="address"
+								id="address" class="textarea100 description"></textarea></td>
+					</tr>
+					<tr style="vertical-align: top;">
+						<td class="label"><label for="description"><spring:message code='th.description' /></label></td>
+						<td class="input" colspan="3"><textarea name="description"
+								id="description" class="textarea100 description"></textarea></td>
+					</tr>
+					<tr>
+						<td colspan="4" class="button">
+							<button class="save" name="save" value="save"><spring:message code='button.save' /></button>
+							<button class="save" name="save" value="saveClose"><spring:message code='button.save_close' /></button>
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+		</form>
+	</div>
+</div>
+<div class="clr"></div>

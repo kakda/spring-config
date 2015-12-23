@@ -1,0 +1,280 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+
+<c:url value="/time-cards/reports/download-team.html" var="downloadUrl"/>
+<c:url value="/reports/download/token.html" var="downloadTokenUrl"/>
+<c:url value="/reports/download/progress.html" var="downloadProgressUrl"/>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+
+		$( "#sDate" ).datepicker({
+			changeMonth: true,
+			onSelect: function() {
+				var minDate = $(this).datepicker('getDate');
+				minDate.add(1).days();
+				$( "#eDate" ).datepicker( "option", "minDate", minDate);
+			}
+		}).unbind('blur');
+		$( "#eDate" ).datepicker({
+			changeMonth: true,
+			onSelect: function(selectedDate) {
+				var maxDate = $(this).datepicker('getDate');
+				maxDate.add(-1).days();
+				$( "#sDate" ).datepicker( "option", "maxDate", maxDate);
+			}
+		}).unbind('blur');
+
+		$('#teamID').find('option:eq(1)').attr('selected', 'selected');
+		
+		$("#btnPreview").click(function(event){
+			event.preventDefault();
+			var isValidate = $("#frmFilter").validationEngine('validate');
+			if(isValidate){
+				$("#timeCardList").trigger("reloadGrid");
+			}
+		});
+		$("#timeCardList").jqGrid({
+	        url: "<c:url value='/time-cards/reportTimeCardOfTeamAjax.html'/>",
+	        datatype: "json",
+	        mtype: "GET",
+	        colNames: ["Team", "Project", "Employee", "<spring:message code='th.time_card.time_card_id' />", "<spring:message code='lbl.time_card.date' />", "<spring:message code='lbl.time_card.working_hour' />"],
+	        colModel: [
+				{
+				    "name":"teamName",
+				    "summaryTpl":"{0}",
+				    "index":"teamName",
+				    "sortable":false
+				},    
+				{
+				    "name":"projectName",
+				    "summaryTpl":"{0}",
+				    "index":"projectName",
+				    "sortable":false
+				},
+	             {
+	                 "name":"employeeName",
+	                 "summaryTpl":"{0}",
+	                 "index":"employeeName",
+					 "sortable":false
+	             },
+	             {
+	                 "name":"timeCardID",
+	                 "summaryTpl":"{0}",
+	                 "index":"timeCardID",
+	     			 "align": "center",
+					 "sortable":false
+	             },{
+	                 "name":"tDate",
+	                 "summaryTpl":"<div style='text-align: right'><spring:message code='th.time_card.sum' />: </div>",
+	                 "index":"tDate",
+	     			 "align": "center",
+	                 "summaryType":"count",
+					 "sortable":false
+	             },{
+	                 "name":"workingHour",
+	                 "summaryTpl":"{0}",
+	                 "index":"workingHour",
+	                 "formatter": "number",
+	                 "summaryType":"sum",
+	     			 "align": "right",
+					 "sortable":false
+	             }
+	        ],
+	        postData: {
+	        	teamID: function(){
+					return $("#teamID").val(); 
+				}
+				,
+				sDate: function(){
+					return $("#sDate").val(); 
+				},
+				eDate: function(){
+					return $("#eDate").val(); 
+				}
+	        },
+			rowNum : 99999,
+	        hoverrows: false,
+	        viewrecords: true,
+			sortable: false,
+	        caption: "",
+	        height: "100%",
+	        emptyrecords: "Empty records",
+	        loadonce: false,
+	        rownumbers: true,
+	        pager: "#timeCardPage",
+	        scrollrows: false,
+			autowidth : true,
+	        loadComplete: function () {},
+			footerrow : true, 
+	        jsonReader: {
+	            page: "page",
+	            total: "total",
+	            records: "records",
+	            root: "rows",
+	            repeatitems: false
+	        },
+	        gridComplete: function () {
+	        	var sum = $("#timeCardList").jqGrid('getCol','workingHour',false,'sum');
+	        	$("#timeCardList").jqGrid('footerData','set',{tDate:"<spring:message code='th.time_card.total_hour' />",workingHour:sum});
+	        },
+	        grouping:true,
+	        groupingView: {
+	            groupField: ["teamName", "projectName", "employeeName"],
+	            groupColumnShow: [false, false, false],
+	            groupText: ["Team: \u003cb\u003e{0}\u003c/b\u003e {1} <spring:message code='th.time_card.row' />(s)", "<spring:message code='th.time_card.project' />: \u003cb\u003e{0}\u003c/b\u003e", "<spring:message code='th.time_card.employee' />: \u003cb\u003e{0}\u003c/b\u003e"],
+	            groupOrder: ["asc", "asc", "asc"],
+	            groupSummary: [false, false, true],
+	            groupCollapse: false,
+	            groupDataSorted: false,
+	            showSummaryOnHide: false,
+	        } 
+	    });
+		$("#timeCardList").jqGrid('navGrid', '#timeCardPage', {
+			edit : false,
+			add : false,
+			del : false,
+			search : false
+		});
+		$("#timeCardList").navButtonAdd('#timeCardPage',
+			{ 	caption:"PDF", 
+				buttonicon:"ui-icon-circle-arrow-s", 
+				onClickButton: function(){
+					download('pdf');
+				},
+				position: "last", 
+				title:"", 
+				cursor: "pointer"
+			} 
+		);
+		
+		$("#timeCardList").navButtonAdd('#timeCardPage',
+			{ 	caption:"Excel", 
+				buttonicon:"ui-icon-circle-arrow-s", 
+				onClickButton: function(){
+					download('xls');
+				},
+				position: "last", 
+				title:"", 
+				cursor: "pointer"
+			} 
+		);
+
+		$( "#sDate" ).datepicker({
+			changeMonth: true,
+			onSelect: function() {
+				var minDate = $(this).datepicker('getDate');
+				minDate.add(1).days();
+				$( "#eDate" ).datepicker( "option", "minDate", minDate);
+			}
+		}).unbind('blur');
+		$( "#eDate" ).datepicker({
+			changeMonth: true,
+			onSelect: function(selectedDate) {
+				var maxDate = $(this).datepicker('getDate');
+				maxDate.add(-1).days();
+				$( "#sDate" ).datepicker( "option", "maxDate", maxDate);
+			}
+		}).unbind('blur');
+
+	});
+
+	function download(type) {
+		// Retrieve download token
+		// When token is received, proceed with download
+	/* 	 $.get('${downloadTokenUrl}', function(response) {
+			// Store token
+			var token = response.message[0];
+			
+			// Show progress dialog
+			$(".message-centered").html("<spring:message code='message.downloading_data' />");
+            $(".message-centered").show();		
+			
+			// Start download
+			
+			$('#token').val(token);
+			$('#type').val(type);
+			$('#tID').val($('#teamID').val());
+			$('#startDate').val($('#sDate').val());
+			$('#endDate').val($('#eDate').val());
+			
+			document.frmDown.submit();
+
+			// Check periodically if download has started
+			var frequency = 1000;
+			var timer = setInterval(function() {
+				$.get('${downloadProgressUrl}', {token: token}, 
+						function(response) {
+							// If token is not returned, download has started
+							// Close progress dialog if started
+							if (response.message[0] != token) {
+								$(".message-centered").hide();
+								clearInterval(timer);
+							}
+					});
+			}, frequency);
+			
+		});  */
+		
+		if(type =='xls'){
+			$('#frmFilter').attr('action',"<c:url value='/time-cards/reportTimeCardOfTeamExcel.html'/>");
+			$('#frmFilter').submit();
+		}else if (type =='pdf'){
+			$('#frmFilter').attr('action',"<c:url value='/time-cards/reportTimeCardOfTeamPDF.html'/>");
+			$('#frmFilter').submit();
+		}
+	}
+	
+</script>
+<form name='frmDown' method="post" action='${downloadUrl}'>
+	<input type="hidden" name="token" id="token" />
+	<input type="hidden" name="type" id="type" />
+	<input type="hidden" name="tID" id="tID" />
+	<input type="hidden" name="startDate" id="startDate" />
+	<input type="hidden" name="endDate" id="endDate" />
+</form>
+<div class="adminform">
+	<div class="title" style="text-align: center;"><spring:message code="legend.time_card.of_team" /></div>
+	<div class="opr">		
+		<form action="" id="frmFilter" class="form" id="filter" >
+			<fieldset>
+				<legend><spring:message code="lbl.filter"/></legend>
+				<table class="form" cellspacing="0" cellpadding="0">
+					<tr>
+						<spring:message code='select.select_team' var="select_team" />
+						<td class="label" style="width:150px;"><label for="teamID">${select_team}<span style="color:red;font-size: 18px;font-weight: bold;">*</span></label></td>
+						<td class="input">
+							<jsp:include page="/teams/selectTeamList.html?id=teamID&placeholder=${select_team}&width=220px"></jsp:include>
+						</td>
+						<td style="width: 120px;">
+						    <label for="sDate"><spring:message code='lbl.time_card.start_date' /><span style="color:red;font-size: 18px;font-weight: bold;">*</span></label>
+						</td>
+						<td style="width: 250px;">
+							<input type="text" readonly="readonly" name="sDate" id="sDate" class="textfield validate[custom[date]] " style="" />
+						</td>
+						<td style="width: 120px;">
+						    <label for="eDate"><spring:message code='lbl.time_card.end_date' /><span style="color:red;font-size: 18px;font-weight: bold;">*</span></label>
+						</td>
+						<td style="width: 250px;">
+							<input type="text" readonly="readonly" name="eDate" id="eDate" class="textfield validate[custom[date]] " style="" />
+						</td>
+						<td style="width: 120px;">
+							<button id="btnPreview" class="search" style=""><spring:message code="button.preview"/></button>
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+		</form>
+		<form class="form" action="">
+			<fieldset>
+				<legend><spring:message code="legend.time_card.of_team" /></legend>
+				<div>
+					<table id="timeCardList"></table>
+					<div id="timeCardPage"></div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</div>
+<div class="clr"></div>

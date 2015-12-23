@@ -1,0 +1,15 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<script type="text/javascript">
+    $(document).ready(function(){
+		$('#customerID').chosen({allow_single_deselect: true});
+		
+    });
+</script>
+<select data-placeholder="<spring:message code="lbl.select_customer"/>" name="customerID" style="width: 250px;" id="customerID" class="require validate[required] finished">
+<option value=""></option>
+<c:forEach var="customer" items="${customerList}" varStatus="status">
+	<option value="${customer.customerID}"><c:choose><c:when test="${customer.customerNameEn!=''}">${customer.customerNameEn}</c:when><c:otherwise>${customer.customerNameKr}</c:otherwise></c:choose></option>
+</c:forEach>
+</select>

@@ -1,0 +1,64 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		setCookie("action", "delete");
+		
+		$("#frmAdd").validationEngine();
+		$("#createdBy").val('${team.createdBy}').trigger("change");
+		$(".cancel").click(function(event){
+			event.preventDefault();
+			$(location).attr('href',"<c:url value='/teams/index.html'/>");
+		});
+	});
+</script>
+<div class="adminform">
+	<div class="break-crumbs">
+		<a href="<c:url value='/teams/index.html' />">
+		<img src="<c:url value='/images/icon/list.png' />" align="absmiddle" alt="" /><spring:message code='lbl.team_list' />
+		</a>
+	</div>
+	<div class="opr">
+		<form action="<c:url value='/teams/doUpdate.html' />" id='frmAdd' method="post">
+			<fieldset>
+				<legend><spring:message code='lbl.update_team_information' /></legend>
+				<table class="form" cellspacing="0" cellpadding="0">
+				<input type="hidden" name="teamID" id="teamID" value="${team.teamID}"/>
+					<tr>
+						<td class="label"><label for="teamName"><spring:message code='th.team' /></label><span class="required">*</span></td>
+
+						<td class="input">
+							<input id="teamName" name="teamName"
+							class="textfield teamName validate[required,maxSize[50],ajax[ajaxCheckTeam]]" type="text" value="${team.teamName}"/></td>
+					</tr>
+					<tr>
+						<td class="label"><label for="createdBy"><spring:message code='th.created_by' /></label><span class="required">*</span></td>
+
+						<td class="input">
+							<spring:message code="select.select_employee" var="select_employee" />
+							<jsp:include page="/employees/selectEmployeeList.html?id=createdBy&placeholder=${select_employee}&width=250px&validate=required"></jsp:include>
+						</td>
+						<td class="label"><label for="createdOn"><spring:message code='th.created_on' /></label><span class="required">*</span></td>
+						<td class="input"><input id="createdOn" name="createdOn"
+							class="textfield date createdOn validate[required,custom[date]]" type="text" value="<fmt:formatDate pattern="dd-MM-yyyy" value='${team.createdOn}'/>"/></td>
+					</tr>
+					<tr style="vertical-align: top;">
+						<td class="label"><label for="description"><spring:message code='th.description' /></label></td>
+						<td colspan="3" class="input"><textarea name="description"
+								id="description" class="textarea-wide description">${team.description}</textarea></td>
+					</tr>
+					<tr>
+						<td colspan="4" class="button">
+							<button class="save"><spring:message code='button.save' /></button>
+							<button class="cancel"><spring:message code='button.cancel' /></button>
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+		</form>
+	</div>
+</div>
+<div class="clr"></div>

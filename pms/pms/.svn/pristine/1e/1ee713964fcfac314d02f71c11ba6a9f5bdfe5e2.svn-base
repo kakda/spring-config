@@ -1,0 +1,296 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
+<c:url value="/time-cards/reports/download-timecard-detail.html" var="downloadUrl" />
+<c:url value="/reports/download/token.html" var="downloadTokenUrl" />
+<c:url value="/reports/download/progress.html" var="downloadProgressUrl" />
+
+<script type="text/javascript">
+	var page = {
+		init : function() {
+			page.initView();
+			page.bindingEvent();
+		},
+		initView : function() {
+//			$("#minWeek, #maxWeek").html(page.generateWeek()).change(page.changeWeek).chosen();
+			$(".month").change(page.changeMonth).chosen();
+			$("#year").html(page.generateYear()).val($("#year option:last-child").val()).chosen();
+		},
+		bindingEvent : function(){
+			$("#btnPreview").click(page.preview);
+		},
+		generateYear : function(){
+			var	today = new Date();
+			var startYear = 2012,
+				endYear = today.getFullYear();
+			return page.optionGenerator(startYear, endYear);
+		},
+		generateWeek : function(){
+			return page.optionGenerator(1, 53);
+		},
+		optionGenerator : function(startIndex, endIndex){
+			var html = "";
+			for(;startIndex <= endIndex; startIndex++)
+				html += "<option value='"+startIndex+"'>"+startIndex+"</option>";
+			return html;
+		},
+		changeWeek : function(){
+			if($(this).attr("id") == "minWeek"){
+				if($("#maxWeek").val()*1 < $(this).val()*1){
+					$("#maxWeek").val($(this).val()).trigger("liszt:updated");
+				}
+			}else{
+				if($("#minWeek").val()*1 > $(this).val()*1){
+					$("#minWeek").val($(this).val()).trigger("liszt:updated");
+				}
+			}
+			
+		},
+		changeMonth : function(){
+			if($(this).attr("id") == "minMonth"){
+				if($("#maxMonth").val()*1 < $(this).val()*1){
+					$("#maxMonth").val($(this).val()).trigger("liszt:updated");
+				}
+			}else{
+				if($("#minMonth").val()*1 > $(this).val()*1){
+					$("#minMonth").val($(this).val()).trigger("liszt:updated");
+				}
+			}			
+		},
+		preview : function(event){
+			event.preventDefault();
+			
+			var year = $("#year").val();
+			var minMonth = $("#minMonth").val();
+			var maxMonth = $("#maxMonth").val();
+			
+			page.renderJqgrid(year, minMonth, maxMonth);
+		},
+		renderJqgrid : function(year, minMonth, maxMonth){
+			$("#timeCardList").GridUnload();
+			$("#timeCardList").jqGrid({
+				url : "<c:url value='/time-cards/reportTimeCardDetailAjax.html'/>",
+				datatype : 'json',
+				mtype : 'GET',
+				colNames : [ '<spring:message code="th.id"/>', '<spring:message code="th.name"/>',
+						'<spring:message code="th.team_name"/>','<spring:message code="th.employee_name"/>','<spring:message code="lbl.time_card.date"/>', '<spring:message code="lbl.time_card.working_hour"/>' ],
+				colModel : [ 
+				{
+					name : 'projectCode',
+					index : 'projectCode',
+					width : 15
+				}, 
+				{
+					name : 'projectName',
+					index : 'projectName',
+					width : 25
+				}, 
+				{
+					name : 'teamName',
+					index : 'employeeName',
+					width : 25
+				},
+				{
+					name : 'employeeName',
+					index : 'employeeName',
+					width : 25
+				},
+				{
+					name : 'tDate',
+					index : 'tDate',
+					width : 8,
+					align : "center"
+
+				}, 
+				{
+					name : 'workingHour',
+					index : 'workingHour',
+					width : 25,
+					align : "center"
+				}],
+				postData : {
+					year : year,
+					minMonth : minMonth,
+					maxMonth : maxMonth
+				},
+				rowNum : 99999,
+				rowList: [],        	// disable page size dropdown
+			    pgbuttons: false,     	// disable page control like next, back button
+			    pgtext: null,         	// disable pager text like 'Page 0 of 10'
+				autowidth : true,
+				rownumbers : true,
+		        hoverrows: false,
+		        viewrecords: false,
+				sortable: false,
+				caption : "",
+				multiboxonly:true,
+		        pager: "#timeCardPage",
+				emptyrecords : "Empty records",
+				loadonce : false,
+				multiselect : false,
+				height: 280,
+				loadComplete : function() {
+				},
+				jsonReader : {
+					page : "page",
+					total : "total",
+					records : "records",
+					root : "rows",
+					repeatitems : false
+				}
+			});
+			$("#timeCardList").jqGrid('navGrid', '#timeCardPage', {
+				edit : false,
+				add : false,
+				del : false,
+				search : false
+			}, {}, {}, {}, {});
+
+			$("#timeCardList").navButtonAdd('#timeCardPage',
+				{ 	caption:"PDF", 
+					buttonicon:"ui-icon-circle-arrow-s", 
+					onClickButton: function(){
+						page.download('pdf');
+					},
+					position: "last", 
+					title:"", 
+					cursor: "pointer"
+				} 
+			);
+			
+			$("#timeCardList").navButtonAdd('#timeCardPage',
+				{ 	caption:"Excel", 
+					buttonicon:"ui-icon-circle-arrow-s", 
+					onClickButton: function(){
+						page.download('xls');
+					},
+					position: "last", 
+					title:"", 
+					cursor: "pointer"
+				} 
+			);
+		},
+		download : function(type) {
+			// Retrieve download token
+			// When token is received, proceed with download
+// 			$.get('${downloadTokenUrl}', function(response) {
+// 				// Store token
+// 				var token = response.message[0];
+				
+// 				// Show progress dialog
+// 				$(".message-centered").html("<spring:message code='message.downloading_data' />");
+// 	            $(".message-centered").show();			
+										
+// 				window.location = '${downloadUrl}'+'?token='+token+'&year='+$("#year").val()+"&minMonth="+$("#minMonth").val()+"&maxMonth="+$("#maxMonth").val()+"&type="+type;
+
+// 				var frequency = 1000;
+// 				var timer = setInterval(function() {
+// 					$.get('${downloadProgressUrl}', {token: token}, 
+// 							function(response) {
+// 								// If token is not returned, download has started
+// 								// Close progress dialog if started
+// 								if (response.message[0] != token) {
+// 									$(".message-centered").hide();
+// 									clearInterval(timer);
+// 								}
+// 						});
+// 				}, frequency);
+				
+// 			});
+			
+			if(type =='xls'){
+				$('#frmFilter').attr('action',"<c:url value='/time-cards/reportTimeCardDetailExcel.html'/>");
+				$('#frmFilter').submit();
+			}else if (type =='pdf'){
+				$('#frmFilter').attr('action',"<c:url value='/time-cards/reportTimeCardDetailPDF.html'/>");
+				$('#frmFilter').submit();
+			}
+		}
+		
+	}
+	$(document).ready(page.init);
+</script>
+<form name='frmDown' method="post" action='${downloadUrl}'>
+	<input type="hidden" name="token" id="token" /> <input type="hidden"
+		name="type" id="type" /> <input type="hidden" name="tID" id="tID" />
+	<input type="hidden" name="startDate" id="startDate" /> <input
+		type="hidden" name="endDate" id="endDate" />
+</form>
+<div class="adminform">
+	<div class="title">
+		Timecard Detail
+	</div>
+	<div class="opr">
+		<form action="" id="frmFilter" class="form" id="filter">
+			<fieldset>
+				<legend>
+					<spring:message code="lbl.filter" />
+				</legend>
+				<table class="form" cellspacing="0" cellpadding="0">
+					<tr>
+						<td style="width: 70px;"><label for="year"><spring:message code="lbl.year"/></label>${yearMax}</td>
+						<td style="width: 150px;"><select  name="year" id="year" style="width: 100px;">
+						</select></td>
+						<td style="width: 100px;"><label for="minMonth"><spring:message code='lbl.time_card.start_date'/></label></td>
+						<td style="width: 150px;"><select id="minMonth" name="minMonth" style="width: 100px;" class="month validate[required]">
+							<option value="1">Jan</option>
+							<option value="2">Feb</option>
+							<option value="3">Mar</option>
+							<option value="4">Apr</option>
+							<option value="5">May</option>
+							<option value="6">Jun</option>
+							<option value="7">Jul</option>
+							<option value="8">Aug</option>
+							<option value="9">Sep</option>
+							<option value="10">Oct</option>
+							<option value="11">Nov</option>
+							<option value="12">Dec</option>
+						</select></td>
+						<td style="width: 100px;"><label for="maxMonth"><spring:message code='lbl.time_card.end_date'/></label></td>
+						<td style="width: 150px;"><select id="maxMonth" name="maxMonth" style="width: 100px;" class="month validate[required]">
+							<option value="1">Jan</option>
+							<option value="2">Feb</option>
+							<option value="3">Mar</option>
+							<option value="4">Apr</option>
+							<option value="5">May</option>
+							<option value="6">Jun</option>
+							<option value="7">Jul</option>
+							<option value="8">Aug</option>
+							<option value="9">Sep</option>
+							<option value="10">Oct</option>
+							<option value="11">Nov</option>
+							<option value="12">Dec</option>
+						</select></td>
+						<!-- 
+						<td style="width: 100px;"><label for="minWeek">From
+								Week</label></td>
+						<td style="width: 150px;"><select id="minWeek"  style="width: 100px;" class="week validate[required]">
+						</select></td>
+						<td style="width: 100px;"><label for="maxWeek">To</label></td>
+						<td style="width: 150px;"><select id="maxWeek" style="width: 100px;" class="week validate[required]">
+						</select></td> -->
+						<td>
+							<button id="btnPreview" class="search" style="">
+								<spring:message code="button.preview" />
+							</button>
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+		</form>
+		<form class="form" action="">
+			<fieldset>
+				<legend>
+					Timecard Detail
+				</legend>
+				<div>
+					<table id="timeCardList"></table>
+					<div id="timeCardPage"></div>
+				</div>
+			</fieldset>
+		</form>
+	
+	</div>
+</div>
+<div class="clr"></div>

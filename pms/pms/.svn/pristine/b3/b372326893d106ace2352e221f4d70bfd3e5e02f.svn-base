@@ -1,0 +1,186 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		var dateFormat = "dd-MM-yyyy";
+		var chart;
+		var existingChart = [];
+
+        var options = {
+            chart: {
+                renderTo: 'chartReport',
+                type: '',
+                marginRight: 130,
+                marginBottom: 25
+            },
+            title: {
+                text: 'Employee Working Hour',
+                x: -20 //center
+            },
+            subtitle: {
+                text: '',
+                x: -20
+            },
+            xAxis: {
+                categories: []
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: "<spring:message code='lbl.time_card.working_hour' />"
+                },
+                plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+            },
+            tooltip: {
+                formatter: function() {
+                    return '<b>'+ this.y +'</b> Hour';
+                }
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: 0,
+                y: 40,
+                borderWidth: 1,
+                backgroundColor: 'white'
+            },
+            plotOptions: {
+                line: {
+                    enableMouseTracking: true
+                }
+            },
+            series: []
+        };
+        
+		$("#filter").validationEngine();
+
+        $("#startDate").datepicker({
+            numberOfMonths: 2,
+            maxDate: 0,
+            onSelect: function(selected) {
+				var startDate = $(this).datepicker("getDate");
+                $("#endDate").datepicker("option","minDate", startDate.add(1).days())
+            }
+        }).unbind('blur');
+        
+        $("#endDate").datepicker({
+            numberOfMonths: 2,
+            maxDate: 0,
+            onSelect: function(selected) {
+				var endDate = $(this).datepicker("getDate");
+                $("#startDate").datepicker("option","maxDate", endDate.add(-1).days())
+            }
+        }).unbind('blur');
+        
+       
+        $("#btnPreview").click(function(event){
+        	event.preventDefault();
+        	var validate = $("#filter").validationEngine("validate");
+        	if(validate){
+    			previewReport();	
+        	}
+        });
+        
+        $("#chart").select2({
+        	formatResult: format,
+        	formatSelection: format,
+        	allowClear: true,
+            placeholder: "<spring:message code='select.select_report' />"
+        });
+        function format(state) {
+        	if (!state.id) return state.text; 
+        	var src = "<c:url value='/images/chart/' />";
+        	return "<img align='absmiddle' class='chart' src='" + src + state.id.toLowerCase() + ".png'  />" + state.text;
+        }
+        
+        var previewReport = function(startDate, endDate, employeeID){
+ 			options.series = []; 			
+ 	        var formFilter= $("#filter").serialize();
+        	$.ajax({
+          		  url: "<c:url value='/time-cards/reportGetEmployeeAjax.html' />",
+          		  type: "GET",
+          		  data: formFilter,
+          		  dataType: "json",
+ 					  async : false,	          		  
+          		  beforeSend: function () {
+  					// Do something
+          		  },
+          		  success: function(response){
+  					 var series = {};
+  				     series.name = $("#employeeID option:selected").text();
+  				     series.data = [];
+          			 $.each(response, function(key, value) {
+					    var categories = {};
+					    series.data.push([value.projectName, value.workingHour]);
+					    options.xAxis.categories.push(value.projectName);
+  					 });
+  				     options.series.push(series);
+          		  }
+          		  
+          	});
+        	options.chart.type = $("#chart").val(); // $("#chart option:selected").text();
+ 			options.title.text = $("#chart option:selected").text() + " Chart"; 
+ 			options.subtitle.text = $("#startDate").val() + " To " + $("#endDate").val(); 
+ 			chart = new Highcharts.Chart(options);
+        }
+	});
+</script>
+<div class="adminform">
+	<div class="title"><spring:message code='legend.time_card.employee_report'/></div>
+	<div class="opr">		
+		<form action="" class="form" id="filter" >
+			<fieldset>
+				<legend><spring:message code="lbl.filter"/></legend>
+				<table class="form" cellspacing="0" cellpadding="0">
+					<tr>
+						<td class="label" style="width: 120px;"><label for="employeeId"><spring:message code='lbl.time_card.employee'/></label><span
+							class="required">*</span></td>
+						<td class="input"><spring:message code='select.select_employee' var="select_employee"/><jsp:include page="/time-cards/selectEmployeeList.html?validate=required&id=employeeID&placeholder=${select_employee}"></jsp:include></td>
+						<td class="label"><label for="chart"><spring:message code='lbl.time_card.chart' /></label><span
+							class="required">*</span></td>
+						<td class="input">
+							<select name="chart" id="chart" class="chart validate[required]" style="width: 250px;">
+								<option value=""></option>
+								<option value="line">Line</option>
+								<option value="area">Area</option>
+								<option value="spline">Spline</option>
+								<option value="scatter">Scatter</option>
+								<option value="areaspline">Area Spline</option>
+								<option value="bar">Bar</option>
+								<option value="column">Column</option>
+								<option value="pie">Pie</option>							
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td class="label"><label for="startDate"><spring:message code='lbl.time_card.start_date' /> </label><span
+							class="required">*</span></td>
+						<td class="input"><input type="text" class="textfield validate[required]"
+							name="startDate" readonly="readonly"  id="startDate" /></td>
+						<td class="label"><label for="endDate"><spring:message code='lbl.time_card.end_date' /></label><span
+							class="required">*</span></td>
+						<td class="input"><input type="text" class="textfield validate[required]"
+							name="endDate" readonly="readonly"  id="endDate" /></td>
+						<td class="input">
+							<button id="btnPreview" class="search" style="margin-left:30px;"><spring:message code="button.preview" /></button>
+						</td>
+				</table>
+			</fieldset>
+		</form>
+		<form class="form" action="">
+			<fieldset>
+				<legend><spring:message code='lbl.time_card.chart' /></legend>
+        		<div id="chartReport" style="width: 100%; height: 400px;"></div>
+			</fieldset>
+		</form>
+	</div>
+</div>
+<div class="clr"></div>

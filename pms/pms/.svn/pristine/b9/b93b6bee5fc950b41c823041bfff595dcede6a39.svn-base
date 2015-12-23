@@ -1,0 +1,30 @@
+filter.date.format = yyyy-MM-dd
+filter.datetime.format = yyyy-MM-dd hh:mm:ss aa
+
+#Connection Property for LDAP Server
+filter.LDAP.url = ldap://218.55.79.2:389
+filter.LDAP.base = dc=mcnc,dc=co,dc=kr
+filter.LDAP.domain = @mcnc.com
+filter.LDAP.userDn = cn=administrator,cn=Users,dc=mcnc,dc=co,dc=kr
+filter.LDAP.password = Sa1ar$M2
+filter.LDAP.userRoot = OU=mcnc,OU=mcnc Active Directory
+
+#Connection Property for SQLServer DB
+filter.DB.url = jdbc:sqlserver://218.55.79.108\\\\MSSQLSERVER:1433;DatabaseName=PMSDB
+filter.DB.username = pmssa
+filter.DB.password = gopms
+
+#SVN 
+filter.SVN.url =  http://svn.mcnc.co.kr/svn/
+filter.SVN.username = admin
+filter.SVN.password = goadmin
+
+#Redmine
+filter.redmine.uri = http://redmine.mcnc.co.kr/redmine
+filter.redmine.apikey = 5dfad33276cb490691620e4d5b50590a1b098d23
+filter.redmine.createissue.userid=1
+
+#Mail
+#mail.cc can be multi value seperate by comma.
+filter.mail.cc = shhong@mcnc.co.kr
+filter.mail.from = shhong@mcnc.co.kr

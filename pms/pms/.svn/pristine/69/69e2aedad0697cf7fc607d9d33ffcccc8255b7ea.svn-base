@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mobilecnc.calender.service.CalenderDAO">
+
+<resultMap type="Calender" id="calen">
+	<result column="holidayId" property="holidayId"/>
+	<result column="holidayTitle" property="holidayTitle"/>
+	<result column="startDate" property="startDate"/>
+	<result column="endDate" property="endDate"/>
+	<result column="entryBy" property="entryBy"/>
+	<result column="lastModifyBy" property="lastModifyBy"/>
+	<result column="years" property="years"/>
+</resultMap>
+
+
+<select id="getCalender" resultMap="calen">
+	SELECT * FROM Holiday
+	where startDate <![CDATA[>=]]> CAST(#{startDate} as DATE) AND endDate <![CDATA[<]]> CAST(#{endDate} as DATE) 
+</select>
+
+<insert id="insertCalender">
+	INSERT INTO Holiday
+	VALUES (#{holidayId},#{holidayTitle},#{startDate},#{endDate},GETDATE(),'test',GETDATE(),'test');
+</insert>
+
+<update id="updateCalender">
+	UPDATE Holiday
+	set 
+		holidayTitle = #{holidayTitle}
+		,startDate = #{startDate}
+		,endDate = #{endDate}
+		,lastModifyDate = GETDATE()
+		,lastModifyBy = 'test'
+	where  holidayId = #{holidayId}
+</update>
+
+<delete id="deleteCalender">
+	DELETE Holiday
+	where  holidayId = #{holidayId}
+</delete>
+
+<select id="getHistory" resultMap="calen">
+<![CDATA[
+	SELECT *,YEAR(startDate) as years FROM Holiday
+	ORDER BY startDate
+]]>
+</select>
+
+<select id="getentryJqgridCalender" resultMap="calen">
+	SELECT * FROM Holiday
+	where startDate  <![CDATA[<=]]> CAST(#{endDate} as DATE)
+	and endDate <![CDATA[>=]]> CAST(#{startDate} as DATE) 
+</select>
+
+<select id="getPreviousYear" resultMap='calen'>
+	SELECT * FROM Holiday
+	where YEAR(startDate) = (SELECT YEAR(MAX(startDate)) FROM Holiday)
+</select>
+
+<delete id="removeDataYear">
+	DELETE FROM Holiday
+	where YEAR(startDate) = #{years}
+</delete>
+
+</mapper>

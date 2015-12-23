@@ -1,0 +1,94 @@
+<!-- Chamroeun -->
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".save").click(function(event){
+		event.preventDefault();
+		$("#frmProfile").attr("action","<c:url value='/user/doUpdate.html'/>");
+		$("#frmProfile").submit();
+	});
+	$(".cancel").click(function(event){
+		event.preventDefault();
+		$(location).attr('href',"<c:url value='/main.html'/>");
+	});
+	 $("#frmProfile").validationEngine({
+         /* ajaxFormValidation: true  */
+     });
+});
+</script>
+
+<c:set var="readonly" value="" scope="page" />
+<c:if test="${userVO.type=='employee'}">
+<c:set var="readonly" value="readonly=\"readonly\"" scope="page" />
+</c:if>
+
+<div class="adminform">
+	<div class="break-crumbs">
+  		
+  	</div>
+	<div class="opr">
+		<form id="frmProfile" method="post" action="<c:url value='/user/doUpdate.html' />">
+			<input type="hidden" name="employeeID" id="employeeID" value="${userVO.employeeID}"/>
+			<fieldset>
+				<legend><spring:message code='menu.my_profile' /></legend>
+				<table class="form" cellspacing="0" cellpadding="0">
+					<tr>
+						<td class="label"><label for="employeeName"><spring:message code='lbl.name' /></label><span class="required">*</span></td>
+						<td class="input"><input id="employeeName" name="employeeName"
+							class="textfield validate[required, maxSize[50]]"
+							value="${userVO.employeeName}" type="text" ${readonly} /></td>
+						<td class="label"><label for="mobilePhone"><spring:message code='lbl.mobile_phone' /></label></td>
+						<td class="input"><input id="mobilePhone" name="mobilePhone"
+							class="textfield validate[maxSize[15]]"
+							value="${userVO.mobilePhone}" type="text" ${readonly} /></td>
+					</tr>
+					<tr>
+						<td class="label"><label for="companyPhone"><spring:message code='lbl.company_phone' /></label></td>
+						<td class="input"><input id="companyPhone" name="companyPhone"
+							class="textfield validate[maxSize[15]]"
+							value="${userVO.companyPhone}" type="text" ${readonly} /></td>
+						<td class="label"><label for="email"><spring:message code='th.email' /></label><span class="required">*</span></td>
+						<td class="input"><input id="email" name="email"
+							class="textfield validate[required, email, maxSize[50]]"
+							value="${userVO.email}" type="text" ${readonly} /></td>
+					</tr>
+					<tr style="vertical-align: top;">
+						<td class="label"><label for="address"><spring:message code='lbl.address' /></label></td>
+						<td class="input" colspan="3"><textarea name="address"
+								id="address" class="textarea100 description" ${readonly}>${userVO.address}</textarea></td>
+					</tr>
+					<c:choose>
+					<c:when test="${userVO.type=='contractor'}">
+					<tr>
+						<td class="label"><label for="currentPassword"><spring:message code='lbl.current_password' /></label><span class="required">*</span></td>
+						<td class="input"><input class="validate[condRequired[newPassword, confirmPassword]] textfield" id="currentPassword" name="currentPassword" type="password" /></td>
+					</tr>
+					<tr>
+						<td class="label"><label for="newPassword"><spring:message code='lbl.new_password' /></label><span class="required">*</span></td>
+						<td class="input"><input class=" validate[condRequired[currentPassword, confirmPassword]] textfield" id="newPassword" name="newPassword" type="password" /></td>
+						<td class="label"><label for="confirmPassword"><spring:message code='lbl.confirm_password' /></label><span class="required">*</span></td>
+						<td class="input"><input class="textfield validate[condRequired[currentPassword, newPassword], equals[newPassword]]" id="confirmPassword" name="confirmPassword" type="password" /></td>
+					</tr>
+					<tr>
+						<td colspan="4" class="button">
+							<button class="save"><spring:message code='button.save' /></button>
+							<button class="cancel"><spring:message code='button.cancel' /></button>
+						</td>
+					</tr>
+					</c:when>
+					<c:otherwise>
+					<tr>
+						<td colspan="4" class="button">
+							<button class="cancel"><spring:message code='button.close' /></button>
+						</td>
+					</tr>
+					</c:otherwise>
+					</c:choose>
+				</table>
+			</fieldset>
+		</form>
+	</div>
+</div>
+<div class="clr"></div>

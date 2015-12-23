@@ -1,0 +1,350 @@
+(function($){
+    $.fn.validationEngineLanguage = function(){
+    };
+    $.validationEngineLanguage = {
+        newLang: function(){
+            $.validationEngineLanguage.allRules = {
+                "required": { // Add your regex rules here, you can take telephone as an example
+                    "regex": "none",
+                    "alertText": "* ì�´ í•„ë“œëŠ” í•„ìˆ˜ í•­ëª©ìž…ë‹ˆë‹¤",
+                    "alertTextCheckboxMultiple": "* ì˜µì…˜ì�„ ì„ íƒ�í•˜ì„¸ìš”",
+                    "alertTextCheckboxe": "* ì�´ í™•ì�¸ëž€ì�´ í•„ìš”í•©ë‹ˆë‹¤",
+                    "alertTextDateRange": "* ë‘� ë‚ ì§œ ë²”ìœ„ í•„ë“œê°€ í•„ìš”í•©ë‹ˆë‹¤"
+                },
+                "requiredInFunction": { 
+                    "func": function(field, rules, i, options){
+                        return (field.val() == "test") ? true : false;
+                    },
+                    "alertText": "* í•„ë“œ í…ŒìŠ¤íŠ¸ì™€ ê°™ì•„ì•¼í•©ë‹ˆë‹¤"
+                },
+                "dateRange": {
+                    "regex": "none",
+                    "alertText": "* ìž˜ëª»ë�œ ",
+                    "alertText2": "ë‚ ì§œ ë²”ìœ„"
+                },
+                "dateTimeRange": {
+                    "regex": "none",
+                    "alertText": "* ìž˜ëª»ë�œ ",
+                    "alertText2": "ë‚ ì§œ ì‹œê°„ ë²”ìœ„"
+                },
+                "minSize": {
+                    "regex": "none",
+                    "alertText": "* ìµœì†Œí•œì�˜ ",
+                    "alertText2": " í—ˆìš© ë�œ ë¬¸ìž�"
+                },
+                "maxSize": {
+                    "regex": "none",
+                    "alertText": "* ìµœëŒ€ì�˜ ",
+                    "alertText2": " í—ˆìš© ë�œ ë¬¸ìž�"
+                },
+                "groupRequired": {
+                    "regex": "none",
+                    "alertText": "* ë‹¤ì�Œ í•„ë“œ ì¤‘ í•˜ë‚˜ë¥¼ ìž‘ì„±í•´ì•¼í•©ë‹ˆë‹¤"
+                },
+                "min": {
+                    "regex": "none",
+                    "alertText": "* ìµœì†Œ ê°’ì�€ "
+                },
+                "max": {
+                    "regex": "none",
+                    "alertText": "* ìµœëŒ€ ê°’ì�€ "
+                },
+                "past": {
+                    "regex": "none",
+                    "alertText": "* ì�´ì „ ë‚ ì§œ "
+                },
+                "future": {
+                    "regex": "none",
+                    "alertText": "* ë‚ ì§œ ì§€ë‚œ "
+                },	
+                "maxCheckbox": {
+                    "regex": "none",
+                    "alertText": "* ìµœëŒ€ì�˜ ",
+                    "alertText2": " í—ˆìš© ì˜µì…˜"
+                },
+                "minCheckbox": {
+                    "regex": "none",
+                    "alertText": "* ì„ íƒ�í•˜ì„¸ìš” ",
+                    "alertText2": " ì˜µì…˜"
+                },
+                "equals": {
+                    "regex": "none",
+                    "alertText": "* í•„ë“œê°€ ì�¼ì¹˜í•˜ì§€ ì•Šì�Œ"
+                },
+                "creditCard": {
+                    "regex": "none",
+                    "alertText": "* ì‹ ìš© ì¹´ë“œ ë²ˆí˜¸ê°€ ìž˜ëª»ë�˜ì—ˆìŠµë‹ˆë‹¤"
+                },
+                "phone": {
+                    // credit: jquery.h5validate.js / orefalo
+                    "regex": /^([\+][0-9]{1,3}[\ \.\-])?([\(]{1}[0-9]{2,6}[\)])?([0-9\ \.\-\/]{3,20})((x|ext|extension)[\ ]?[0-9]{1,4})?$/,
+                    "alertText": "* ì „í™” ë²ˆí˜¸ê°€ ìž˜ëª»ë�˜ì—ˆìŠµë‹ˆë‹¤"
+                },
+                "email": {
+                    // HTML5 compatible email regex ( http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#    e-mail-state-%28type=email%29 )
+                    "regex": /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+                    "alertText": "* ì�´ë©”ì�¼ ì£¼ì†Œê°€ ìž˜ëª»ë�˜ì—ˆìŠµë‹ˆë‹¤"
+                },
+                "integer": {
+                    "regex": /^[\-\+]?\d+$/,
+                    "alertText": "* ì�€ (ëŠ”) ì˜¬ë°”ë¥¸ ì •ìˆ˜"
+                },
+                "number": {
+                    // Number, including positive, negative, and floating decimal. credit: orefalo
+                    "regex": /^[\-\+]?(([0-9]+)([\.,]([0-9]+))?|([\.,]([0-9]+))?)$/,
+                    "alertText": "* ìž˜ëª»ë�œ ë¶€ë�™ ì†Œìˆ˜ì � ë²ˆí˜¸"
+                },
+                "date": {
+                   // "regex": /^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$/,
+                   // "regex": /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/,
+
+                    "regex": /^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$/,
+                    "alertText": "* ìž˜ëª»ë�œ ë‚ ì§œëŠ” DD-MM-YYYY í˜•ì‹�ì�´ì–´ì•¼í•©ë‹ˆë‹¤"
+                },
+                "ipv4": {
+                    "regex": /^((([01]?[0-9]{1,2})|(2[0-4][0-9])|(25[0-5]))[.]){3}(([0-1]?[0-9]{1,2})|(2[0-4][0-9])|(25[0-5]))$/,
+                    "alertText": "* ìž˜ëª»ë�œ IP ì£¼ì†Œ"
+                },
+                "url": {
+                    "regex": /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i,
+                    "alertText": "* ìž˜ëª»ë�œ URL"
+                },
+                "onlyNumberSp": {
+                    "regex": /^[0-9\ ]+$/,
+                    "alertText": "* ìˆ«ìž� ë§Œ"
+                },
+                "onlyLetterSp": {
+                    "regex": /^[a-zA-Z\ \']+$/,
+                    "alertText": "* íŽ¸ì§€ ë§Œ"
+                },
+                "onlyLetterNumber": {
+                    "regex": /^[0-9a-zA-Z]+$/,
+                    "alertText": "* í—ˆìš© ë�œ íŠ¹ìˆ˜ ë¬¸ìž�ëŠ” ì—†ìŠµë‹ˆë‹¤"
+                },
+                // --- CUSTOM RULES -- Those are specific to the demos, they can be removed or changed to your likings
+                "ajaxUserCall": {
+                    "url": "ajaxValidateFieldUser",
+                    // you may want to pass extra data on the ajax call
+                    "extraData": "name=eric",
+                    "alertText": "* ì�´ ì‚¬ìš©ìž�ëŠ” ì�´ë¯¸ ì‚¬ìš© ì¤‘ìž…ë‹ˆë‹¤",
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxUserCallPhp": {
+                    "url": "phpajax/ajaxValidateFieldUser.php",
+                    // you may want to pass extra data on the ajax call
+                    "extraData": "name=eric",
+                    // if you provide an "alertTextOk", it will show as a green prompt when the field validates
+                    "alertTextOk": "* ì�´ ì‚¬ìš©ìž� ì�´ë¦„ì�€ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    "alertText": "* ì�´ ì‚¬ìš©ìž�ëŠ” ì�´ë¯¸ ì‚¬ìš© ì¤‘ìž…ë‹ˆë‹¤",
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxNameCall": {
+                    // remote json service location
+                    "url": "ajaxValidateFieldName",
+                    // error
+                    "alertText": "* ì�´ ì�´ë¦„ì�´ ì�´ë¯¸ ìžˆìŠµë‹ˆë‹¤",
+                    // if you provide an "alertTextOk", it will show as a green prompt when the field validates
+                    "alertTextOk": "* ì�´ ì�´ë¦„ì�€ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxNameCallPhp": {
+                    // remote json service location
+                    "url": "phpajax/ajaxValidateFieldName.php",
+                    // error
+                    "alertText": "* ì�´ ì�´ë¦„ì�´ ì�´ë¯¸ ìžˆìŠµë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "validate2fields": {
+                    "alertText": "* HELLO ìž…ë ¥í•˜ì„¸ìš”"
+                },
+                //tls warning:homegrown not fielded
+                "dateFormat":{
+                    "regex": /^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$|^(?:(?:(?:0?[13578]|1[02])(\/|-)31)|(?:(?:0?[1,3-9]|1[0-2])(\/|-)(?:29|30)))(\/|-)(?:[1-9]\d\d\d|\d[1-9]\d\d|\d\d[1-9]\d|\d\d\d[1-9])$|^(?:(?:0?[1-9]|1[0-2])(\/|-)(?:0?[1-9]|1\d|2[0-8]))(\/|-)(?:[1-9]\d\d\d|\d[1-9]\d\d|\d\d[1-9]\d|\d\d\d[1-9])$|^(0?2(\/|-)29)(\/|-)(?:(?:0[48]00|[13579][26]00|[2468][048]00)|(?:\d\d)?(?:0[48]|[2468][048]|[13579][26]))$/,
+                    "alertText": "* ìž˜ëª»ë�œ ë‚ ì§œ"
+                },
+                //tls warning:homegrown not fielded 
+                "dateTimeFormat": {
+                    "regex": /^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])\s+(1[012]|0?[1-9]){1}:(0?[1-5]|[0-6][0-9]){1}:(0?[0-6]|[0-6][0-9]){1}\s+(am|pm|AM|PM){1}$|^(?:(?:(?:0?[13578]|1[02])(\/|-)31)|(?:(?:0?[1,3-9]|1[0-2])(\/|-)(?:29|30)))(\/|-)(?:[1-9]\d\d\d|\d[1-9]\d\d|\d\d[1-9]\d|\d\d\d[1-9])$|^((1[012]|0?[1-9]){1}\/(0?[1-9]|[12][0-9]|3[01]){1}\/\d{2,4}\s+(1[012]|0?[1-9]){1}:(0?[1-5]|[0-6][0-9]){1}:(0?[0-6]|[0-6][0-9]){1}\s+(am|pm|AM|PM){1})$/,
+                    "alertText": "* ìž˜ëª»ë�œ ë‚ ì§œ ë˜�ëŠ” ë‚ ì§œ í˜•ì‹�",
+                    "alertText2": "ì˜ˆìƒ� í˜•ì‹�: ",
+                    "alertText3": "mm/dd/yyyy hh:mm:ss AM|PM or ", 
+                    "alertText4": "yyyy-mm-dd hh:mm:ss AM|PM"
+                },
+                "ajaxCheckUsername": {
+                    // remote json service location
+                    "url": "../checkTitleName.html",
+                    "alertTextOk": "* ì�´ ì�´ë¦„ì�€ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ì�´ ì�´ë¦„ì�´ ì�´ë¯¸ ìžˆìŠµë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxCheckTitle": {
+                    // remote json service location
+                    "url": "../titles/ajaxCheckTitle.html",
+                    "alertTextOk": "* ì�´ ì œëª©ì�€ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ì�´ ì œëª©ì�€ ì�´ë¯¸ ì‚¬ìš© ì¤‘ìž…ë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxCheckTitleUpdate": {
+                    // remote json service location
+                    "url": "../ajaxCheckTitle.html",
+                    "extraDataDynamic": ['#titleID'],
+                    "alertTextOk": "* ì�´ ì œëª©ì�€ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ì�´ ì œëª©ì�€ ì�´ë¯¸ ì‚¬ìš© ì¤‘ìž…ë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                /**
+                 * @author Chamroeun
+                 */
+                "ajaxCheckSkill": {
+                    // remote json service location
+                    "url": "../skills/ajaxCheckSkill.html",
+                    "alertTextOk": "* ì�´ ê¸°ìˆ ì�„ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ì�´ ê¸°ìˆ ì�€ ì�´ë¯¸ ì‚¬ìš© ì¤‘ìž…ë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxCheckSkillUpdate": {
+                    // remote json service location
+                    "url": "../ajaxCheckSkill.html",
+                    "extraDataDynamic": ['#skillID'],
+                    "alertTextOk": "* ì�´ ê¸°ìˆ ì�„ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ì�´ ê¸°ìˆ ì�€ ì�´ë¯¸ ì‚¬ìš© ì¤‘ìž…ë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxCheckUnsubmitReason": {
+                    "url": "../unsubmit-reasons/ajaxCheckUnsubmitReason.html",
+                    "alertTextOk": "* ì�´ëŸ¬í•œ ì�´ìœ ë¡œ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    "alertText": "* ì�´ëŸ¬í•œ ì�´ìœ ë¡œì�´ ì�´ë¯¸ ìžˆìŠµë‹ˆë‹¤",
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxCheckUnsubmitReasonUpdate": {
+                    "url": "../ajaxCheckUnsubmitReason.html",
+                    "extraDataDynamic": ['#unsubmitReasonID'],
+                    "alertTextOk": "* ì�´ëŸ¬í•œ ì�´ìœ ë¡œ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    "alertText": "* ì�´ëŸ¬í•œ ì�´ìœ ë¡œì�´ ì�´ë¯¸ ìžˆìŠµë‹ˆë‹¤",
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxCheckTeam": {
+                    // remote json service location
+                    "url": "../teams/ajaxCheckTeam.html",
+                    "alertTextOk": "* ì�´ íŒ€ì�€ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ì�´ íŒ€ì�´ ì�´ë¯¸ ìžˆìŠµë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+/**
+                 * @author Chamroeun
+                 */
+                "ajaxCheckProjectType": {
+                    // remote json service location
+                    "url": "../project-types/ajaxCheckProjectType.html",
+                    "alertTextOk": "* ì�´ í”„ë¡œì �íŠ¸ í˜•ì‹�ì�„ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ì�´ í”„ë¡œì �íŠ¸ í˜•ì‹�ì�€ ì�´ë¯¸ ì‚¬ìš© ì¤‘ìž…ë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxCheckProjectTypeUpdate": {
+                    // remote json service location
+                    "url": "../ajaxCheckProjectType.html",
+                    "extraDataDynamic": ['#projectTypeID'],
+                    "alertTextOk": "* ì�´ í”„ë¡œì �íŠ¸ í˜•ì‹�ì�„ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ì�´ í”„ë¡œì �íŠ¸ í˜•ì‹�ì�€ ì�´ë¯¸ ì‚¬ìš© ì¤‘ìž…ë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxCheckTeamUpdate": {
+                    // remote json service location
+                    "url": "../ajaxCheckTeam.html",
+                    "extraDataDynamic": ['#teamID'],
+                    "alertTextOk": "* ì�´ íŒ€ì�€ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ì�´ íŒ€ì�´ ì�´ë¯¸ ìžˆìŠµë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxCheckProject": {
+                    // remote json service location
+                    "url": "../projects/ajaxCheckProject.html",
+                    "alertTextOk": "* ì�´ í”„ë¡œì �íŠ¸ ì�´ë¦„ì�€ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ì�´ í”„ë¡œì �íŠ¸ ì�´ë¦„ì�´ ì�´ë¯¸ ìžˆìŠµë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxCheckUser":{
+                	"url": "../employees/ajaxCheckUser.html",
+                    "alertTextOk": "* ì�´ ì‚¬ìš©ìž� ì�´ë¦„ì�„ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ì�´ ì‚¬ìš©ìž� ì�´ë¦„ì�€ ì�´ë¯¸ ì €ìž¥ë�˜ì–´ ìžˆìŠµë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxCheckUserUpdate":{
+                	"url": "../ajaxCheckUserUpdate.html",
+                	"extraDataDynamic": ['#employeeID'],
+                    "alertTextOk": "* ì�´ ì‚¬ìš©ìž� ì�´ë¦„ì�„ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ì�´ ì‚¬ìš©ìž� ì�´ë¦„ì�€ ì�´ë¯¸ ì €ìž¥ë�˜ì–´ ìžˆìŠµë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxCheckProjectUpdate": {
+                    // remote json service location
+                    "url": "../ajaxCheckProject.html",
+                    "extraDataDynamic": ['#projectID'],
+                    "alertTextOk": "* ì�´ ì œëª©ì�€ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ì�´ ì œëª©ì�€ ì�´ë¯¸ ì‚¬ìš© ì¤‘ìž…ë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                }
+                ,
+                "ajaxCheckSVN":{
+                	"url": "../projects/ajaxCheckSVN.html",
+                    "alertTextOk": "* ì�´ SVN ì�´ë¦„ì�„ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ë‹¹ì‹ ì�€ ì�´ë¯¸ SVN ì�´ë¦„ì�„ ì¡´ìž¬ ê°€ë“�",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxCheckRole": {
+                    // remote json service location
+                    "url": "../roles/ajaxCheckRole.html",
+                    "alertTextOk": "* ì�´ ì—­í• ì�„ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ì�´ ì—­í• ì�´ ì�´ë¯¸ ìžˆìŠµë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                },
+                "ajaxCheckRoleUpdate": {
+                    // remote json service location
+                    "url": "../ajaxCheckRole.html",
+                    "extraDataDynamic": ['#roleID'],
+                    "alertTextOk": "* ì�´ ì—­í• ì�„ ì‚¬ìš©í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤",
+                    // error
+                    "alertText": "* ì�´ ì—­í• ì�´ ì�´ë¯¸ ìžˆìŠµë‹ˆë‹¤",
+                    // speaks by itself
+                    "alertTextLoad": "* í™•ì�¸, ìž ì‹œ ê¸°ë‹¤ë ¤ì£¼ì‹­ì‹œì˜¤"
+                }
+            };
+            
+        }
+    };
+
+    $.validationEngineLanguage.newLang();
+    
+})(jQuery);

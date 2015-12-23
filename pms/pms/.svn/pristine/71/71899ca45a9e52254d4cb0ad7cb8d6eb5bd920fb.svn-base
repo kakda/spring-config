@@ -1,0 +1,92 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
+<div class="adminform">
+	<div class="opr">
+		<fieldset>
+			<legend><spring:message code='menu.support_contact' /></legend>
+			<table class="form" style="font-size: 120%;">
+				<tr>
+					<td style="vertical-align: top">
+						<div>
+							<div style="height: 15px;"></div>
+							<div>
+								<b>Mobile C&C Cambodia</b>
+							</div>
+							<div style="height: 10px;"></div>
+							<p><spring:message code='help.contact.address' /></p>
+							<p>
+							<div><spring:message code='help.contact.tel' />: +855 (23) 987 477</div>
+							<div><spring:message code='th.email' />: bsoh@mcnc.co.kr</div>
+							<div><a href="http://www.mcnc.co.kr" target="_blank">www.mcnc.co.kr</a> </div>
+							</p>
+							<div style="height: 15px;"></div>
+							<div>
+								<b><spring:message code='help.contact.development_team' /></b>
+							</div>
+							<div style="height: 15px;"></div>
+							<ul class="random-developer">
+								<li>
+									<div>
+										<b>Sambath Kakda</b>
+									</div>
+									<div><spring:message code='help.contact.tel' />: +855 (0)17 377 991</div>
+									<div><spring:message code='th.email' />: sambathkakda@mcnc.co.kr</div>
+									<div><spring:message code='help.contact.software_developer' /></div>
+								</li>
+								<li>
+									<div>
+										<b>Rin Rady</b>
+									</div>
+									<div><spring:message code='help.contact.tel' />: +85592 495 415</div>
+									<div><spring:message code='th.email' />: rinrady@mcnc.co.kr</div>
+									<div><spring:message code='help.contact.software_developer' /></div>
+								</li>
+								<li>
+									<div>
+										<b>Sea Chamroeun</b>
+									</div>
+									<div><spring:message code='help.contact.tel' />: +855 (0)12 676 278</div>
+									<div><spring:message code='th.email' />: chamroeun@mcnc.co.kr</div>
+									<div><spring:message code='help.contact.software_developer' /></div>
+								</li>
+								<li>
+									<div><b>Eap Sereysopheak</b></div>
+									<div><spring:message code='help.contact.tel' />: 85567 442 657</div>
+									<div><spring:message code='th.email' />: sereysopheak.eap@mcnc.co.kr</div>
+									<div><spring:message code='help.contact.software_developer' /></div>
+								</li>
+							</ul>
+							<div style="clear:both"></div>
+						</div>
+					</td>
+					<td>
+						<div style="border: 1px solid #717171;">
+							<iframe width="600" height="400" frameborder="0" scrolling="no"
+								marginheight="0" marginwidth="0"
+								src="https://maps.google.com/maps/ms?msid=212550124674375213850.0004c84f1822df24ad4c2&amp;msa=0&amp;ie=UTF8&amp;t=m&amp;ll=11.559669,104.933252&amp;spn=0.008409,0.012853&amp;z=16&amp;iwloc=0004c84f1bb92480945e0&amp;output=embed"></iframe>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('ul.random-developer').each(function() {
+			var $ul = $(this);
+			var $liArr = $ul.children('li');
+			$liArr.sort(function(a, b) {
+				var temp = parseInt(Math.random() * 10);
+				var isOddOrEven = temp % 2;
+				var isPosOrNeg = temp > 5 ? 1 : -1;
+				return (isOddOrEven * isPosOrNeg);
+			})
+			.appendTo($ul);
+		});
+	});
+</script>
+<div class="clr"></div>

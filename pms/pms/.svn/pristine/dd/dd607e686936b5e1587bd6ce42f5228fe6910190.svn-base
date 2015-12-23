@@ -1,0 +1,256 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+
+<c:url value="/teams/reports/download.html" var="downloadUrl"/>
+<c:url value="/reports/download/token.html" var="downloadTokenUrl"/>
+<c:url value="/reports/download/progress.html" var="downloadProgressUrl"/>
+
+<script type="text/javascript">
+	function gridReload() {
+	    var a = $("#fieldName").val();
+	    var b = $("#fieldValue").val();
+	    $("#teamList").jqGrid("setGridParam", {
+	        url: "<c:url value='/teams/ajaxGrid.html'/>",
+	        page: 1,
+	        mtype: "GET",
+	        search: true,
+	        postData: {
+	            searchOper: function () {
+	                return "cn"
+	            },
+	            searchField: function () {
+	                return a
+	            },
+	            searchString: function () {
+	                return b
+	            }
+	        }
+	    }).trigger("reloadGrid")
+	}
+	var autoSearch;
+	$(window).load(function () {
+	    autoSearch = $("#autoSearch").attr("checked") ? true : false
+	});
+	
+	$(document).ready(function() {
+		$(".btnDeleteSelected").click(function(event){
+			   event.preventDefault();
+			    deleteSelctedRow("#teamList", "<c:url value='/teams/doDelete/' />", 'teamID');
+		});
+		$(".addNew").click(function(event){
+			event.preventDefault();
+			window.location = "<c:url value='/teams/add.html' />";
+		});
+		
+		$("#teamList").jqGrid(
+						{
+							url : "<c:url value='/teams/ajaxGrid.html'/>",
+							datatype : 'json',
+							mtype : 'GET',
+							colNames : [ '<spring:message code="th.action"/>', '<spring:message code="th.id"/>',
+									'<spring:message code="th.team"/>','<spring:message code="th.created_by"/>','<spring:message code="th.created_on"/>', '<spring:message code="th.description"/>' ],
+							colModel : [ {
+								name : 'act',
+								index : 'act',
+								width : 11,
+								sortable : false,
+								search: false
+							}, 
+							{
+								name : 'teamID',
+								index : 'teamID',
+								width : 6
+							}, 
+							{
+								name : 'teamName',
+								index : 'teamName',
+								width : 15
+							},
+							{
+								name : 'createdByName',
+								index : 'createdByName',
+								width : 25
+							},
+							{
+								name : 'createdOn',
+								index : 'createdOn',
+								width : 8
+
+							}, 
+							{
+								name : 'description',
+								index : 'description',
+								width : 35
+							}],
+							postData : {},
+							rowNum : 10,
+							rowList : [ 10, 20, 40, 60, 100 ],
+							height : 200,
+							autowidth : true,
+							rownumbers : true,
+							pager : '#skillPage',
+							sortname : 'teamID',
+							viewrecords : true,
+							sortorder : "asc",
+							caption : "",
+							multiboxonly:true,
+							emptyrecords : "Empty records",
+							loadonce : false,
+							multiselect : true,
+							height: 230,
+							page : getPageNumber("pageNumber"),
+							
+							loadComplete : function() {
+							},
+							jsonReader : {
+								page : "page",
+								total : "total",
+								records : "records",
+								root : "rows",
+								repeatitems : false
+							},
+							gridComplete : function() {
+								gridAction("#teamList", "<c:url value='/teams/' />", "teamID", true, true, true);
+								setCookie("pageNumber", $('#teamList').getGridParam('page'));
+							}
+						});
+		$("#teamList").jqGrid('navGrid', '#skillPage', {
+			edit : false,
+			add : false,
+			del : false,
+			search : true
+		}, {}, {}, {}, { // search
+			sopt : [ 'cn', 'eq' ],
+			closeOnEscape : true,
+			multipleSearch : false,
+			closeAfterSearch : true,
+			position: "center"
+		});
+		$("#teamList").navButtonAdd('#skillPage',
+			{ 	caption:"<spring:message code='button.pdf'/>", 
+				buttonicon:"ui-icon-circle-arrow-s", 
+				onClickButton: function(){
+					download('pdf');
+				},
+				position: "last", 
+				title:"", 
+				cursor: "pointer"
+			} 
+		);
+		
+		$("#teamList").navButtonAdd('#skillPage',
+			{ 	caption:"<spring:message code='button.excel'/>", 
+				buttonicon:"ui-icon-circle-arrow-s", 
+				onClickButton: function(){
+					download('xls');
+				},
+				position: "last", 
+				title:"", 
+				cursor: "pointer"
+			} 
+		);
+		$("#btnSearch").click(function (e) {
+	        e.preventDefault();
+	        gridReload()
+	    });
+	    $("#fieldValue").keydown(function () {
+	        if (autoSearch) {
+	            setTimeout(gridReload, 500)
+	        }
+	    });
+	    $("#fieldName").change(function () {
+	        if (autoSearch) {
+	            setTimeout(gridReload, 500)
+	        }
+	    });
+	    $("#autoSearch").change(function () {
+	        autoSearch = $(this).attr("checked")
+	    })
+	    
+	});
+	
+	function download(type) {
+		// Retrieve download token
+		// When token is received, proceed with download
+		$.get('${downloadTokenUrl}', function(response) {
+			// Store token
+			var token = response.message[0];
+			
+			// Show progress dialog
+			$('#msgbox').text('Processing download...');
+			$('#msgbox').dialog( 
+					{	title: 'Download',
+						modal: true,
+						buttons: null
+					});
+			
+			// Start download
+			window.location = '${downloadUrl}'+'?token='+token+'&type='+type;
+
+			// Check periodically if download has started
+			var frequency = 1000;
+			var timer = setInterval(function() {
+				$.get('${downloadProgressUrl}', {token: token}, 
+						function(response) {
+							// If token is not returned, download has started
+							// Close progress dialog if started
+							if (response.message[0] != token) {
+								$('#msgbox').dialog('close');
+								clearInterval(timer);
+							}
+					});
+			}, frequency);
+			
+		});
+	}
+</script>
+<div class="adminform">
+
+	<div class="opr">
+		<form action="">
+		<div class="title"><spring:message code='lbl.team_management'/></div>
+		<fieldset>
+			<legend><spring:message code='lbl.filter'/></legend>
+			<table class="form" >
+				<tr>
+					<td class="input">
+						<input type="text" class="textfield" id="fieldValue" />
+					</td>
+					<td>
+						<select id="fieldName" class="select-single" style="width: 200px">
+							<option value="teamID"><spring:message code='th.id'/></option>
+							<option value="teamName" selected="selected"><spring:message code='th.team'/></option>
+							<option value="createdByName"><spring:message code='th.created_by'/></option>
+						</select>
+					</td>
+					<td>
+						<input type="checkbox" id="autoSearch" />
+					</td>
+					<td>
+						<label for="autoSearch"><spring:message code='lbl.auto'/></label>
+					</td>
+					<td>
+						<button id="btnSearch" class="search"><spring:message code='button.search'/></button>
+					</td>
+				</tr>
+			</table> 
+		</fieldset>
+		</form>
+		<form action="">
+			<fieldset>
+				<legend><spring:message code='lbl.team_list'/></legend>
+				<div id='msgbox' title='' style='display:none'></div>
+				<div>
+					<table id="teamList"></table>
+					<div id="skillPage"></div>
+					<div>
+					<button class="btnDeleteSelected delete"><spring:message code='button.delete'/></button>
+					<button class="addNew add"><spring:message code='button.add'/></button>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</div>
+<div class="clr"></div>

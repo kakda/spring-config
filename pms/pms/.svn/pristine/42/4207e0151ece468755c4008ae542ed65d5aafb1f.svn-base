@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mobilecnc.roles.service.RoleDAO">
+	
+	<resultMap id="role" type="Role">
+        <result property="roleID" column="roleID"/>
+        <result property="roleName" column="roleName"/>
+        <result property="description" column="description"/>
+        <result property="entryDate" column="entryDate" />
+		<result property="entryBy" column="entryBy" />
+		<result property="lastModifyDate" column="lastModifyDate" />
+		<result property="lastModifyBy" column="lastModifyBy" />
+    </resultMap>
+	
+	<select id="selectRoleList" resultMap="role">  	
+			SELECT roleID, roleName FROM Roles 
+	</select>
+	
+
+	<select id="getAllRoles" resultMap="role"> SELECT * FROM Roles;
+	</select>
+
+	<insert id="insertRole">
+		<![CDATA[
+			INSERT INTO Roles 
+			(roleID, roleName, description, entryDate, entryBy, lastModifyDate, lastModifyBy)
+			VALUES
+			(#{roleID}, #{roleName}, #{description}, getdate(), #{entryBy}, getDate(), #{entryBy});
+		]]>
+	</insert>
+
+	<insert id="insertRolePermssion" statementType="CALLABLE">
+		{ CALL SP_InsertPermissionRight(#{roleID},#{addList},#{removeList})}
+	</insert>
+	
+	<update id="updateRole" parameterType="Role"> 
+		<![CDATA[ 
+			UPDATE Roles 
+			SET 
+				roleName = #{roleName}, 
+				description = #{description}, 
+				lastModifyDate = getdate(), 
+				lastModifyBy = #{lastModifyBy} 
+			WHERE roleID = #{roleID};
+		]]>
+	</update>
+
+	<select id="deleteRole" parameterType="String">
+		<![CDATA[
+			DELETE FROM Roles
+			WHERE roleID = #{roleID};
+		]]>
+	</select>
+
+	<select id="getRole" parameterType="String" resultMap="role">
+	<![CDATA[
+		SELECT *
+		FROM Roles
+		WHERE roleID = #{roleID};
+	]]>
+	</select>
+
+	<select id="getPagingRecord" resultMap="role"
+		parameterType="com.mobilecnc.helper.PagingCondition">
+		
+		SELECT * FROM
+		(SELECT ROW_NUMBER() OVER (ORDER BY roleID) RowNr, roleID, roleName, description, entryDate, entryBy, lastModifyDate, lastModifyBy
+		FROM Roles		
+		<where>
+			<if test="col != null">
+				${where}
+			</if>
+		</where>
+		) AS VTables
+		WHERE RowNr BETWEEN #{start} AND #{end}  
+		ORDER BY ${sidx} ${sord}
+		
+		<!-- SELECT roleID, roleName, description, entryDate, entryBy, lastModifyDate, lastModifyBy
+		FROM VRoles WHERE RowNr BETWEEN #{start} AND #{end}
+		${where} ORDER BY ${sidx} ${sord} -->
+	</select>
+
+	<select id="getRecordCount" resultType="int"
+		parameterType="com.mobilecnc.helper.PagingCondition">
+		SELECT COUNT(roleID) FROM Roles
+		<where>
+			<if test="#{col} != null">
+				${col} ${oper} ${val}
+			</if>
+		</where>
+	</select>
+
+	<!-- 0 is valid -->
+	<select id="checkExistName" resultType="int">
+		<![CDATA[
+			SELECT COUNT(roleName)
+			FROM Roles
+			WHERE roleID <> #{roleID} AND UPPER(roleName) LIKE UPPER(#{roleName});
+		]]>
+	</select>
+</mapper>

@@ -1,0 +1,61 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<script>
+	setCookie("action", "delete");
+</script>
+<div class="adminform">
+	<div class="break-crumbs">
+    	<a href="<c:url value='/customers/index.html' />"><img src="<c:url value='/images/icon/list.png' />" align="absmiddle" alt="" /><spring:message code='lbl.customer_list' /></a> 
+  	</div>
+	<div class="opr">
+		<form id='frmView'
+			method="post">
+			<fieldset>
+				<legend><spring:message code='lbl.customer_detail' /></legend>
+				<table class="view" cellpadding="5" cellspacing="5">
+					<tr>
+						<td class="label"><spring:message code='lbl.customer'/> ID</td>
+						<td class="value">${customer.customerID}</td>
+						<td class="label"><spring:message code='lbl.name' /></td>
+						<td class="value">
+						<c:if test="${not empty customer.customerNameEn}">${customer.customerNameEn}</c:if>
+						<c:if test="${not empty customer.customerNameKr}">
+							<c:choose>
+								<c:when test="${not empty customer.customerNameEn}">(${customer.customerNameKr})</c:when>
+								<c:otherwise>${customer.customerNameKr}</c:otherwise>
+							</c:choose>
+						</c:if>
+						</td>
+					</tr>
+					<tr>
+						<td class="label"><spring:message code='lbl.industry' /></td>
+						<td class="value">${customer.industry}</td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="label"><spring:message code='lbl.address' /></td>
+						<td class="value" colspan="3">${customer.address}</td>
+					</tr>
+					<tr>
+						<td class="label"><spring:message code='th.description' /></td>
+						<td class="value" colspan="3">${customer.description}</td>
+					</tr>
+					<tr>
+						<td class="label"><spring:message code='th.contact_name' /></td>
+						<td class="value">${customer.contactName}</td>
+						<td class="label"><spring:message code='lbl.mobile_phone' /></td>
+						<td class="value">${customer.contactMobilePhone}</td>
+					</tr>
+					<tr>
+						<td class="label"><spring:message code='lbl.company_phone' /></td>
+						<td class="value">${customer.contactCompanyPhone}</td>
+						<td class="label"><spring:message code='th.email' /></td>
+						<td class="value">${customer.contactEmail}</td>
+					</tr>
+				</table>
+			</fieldset>
+		</form>
+	</div>
+</div>

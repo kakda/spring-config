@@ -1,0 +1,335 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<c:url value="/projects/reports/download.html" var="downloadUrl"/>
+<c:url value="/reports/download/token.html" var="downloadTokenUrl"/>
+<c:url value="/reports/download/progress.html" var="downloadProgressUrl"/>
+
+<script type="text/javascript">
+	var autoSearch;
+	$(window).load(function(){
+		autoSearch = $("#autoSearch").attr('checked') ? true : false;
+	});
+	$(document).ready(function() {
+
+		$('#projectTypeID, #customerID, #employeeID').find('option').each(function(){
+			var e = $(this);
+			var txt = $.trim(e.text());
+			e.val(txt);
+		});
+		
+		 $(".btnDeleteSelected").click(function(event){
+			event.preventDefault();
+		 	deleteSelctedRow("#projectList", "<c:url value='/projects/doDelete/' />", 'projectID');
+		 });
+		$("#projectList").jqGrid(
+						{
+							url : "<c:url value='/projects/ajaxGrid.html'/>",
+							datatype : 'json',
+							mtype : 'GET',
+							colNames : [  '<spring:message code="th.id"/>',
+											'<spring:message code="th.name"/>', '<spring:message code="th.type"/>', '<spring:message code="th.pm"/>', 
+											'<spring:message code="th.customer"/>', '<spring:message code="th.actual_man_month"/>', 
+											'<spring:message code="th.actual_start_date"/>', '<spring:message code="th.actual_end_date"/>'],
+							colModel : [  {
+								name : 'projectID',
+								index : 'projectID',
+								width : 20
+							}, {
+								name : 'projectName',
+								index : 'projectName',
+								width : 80
+							}, {
+								name : 'projectTypeName',
+								index : 'projectTypeName',
+								width : 50
+							}
+							, {
+								name : 'employeeName',
+								index : 'employeeName',
+								width : 50
+							}
+							, {
+								name : 'customerName',
+								index : 'customerName',
+								width : 50
+							}
+							, {
+								name : 'actualMM',
+								index : 'actualMM',
+								width : 30
+							}
+							, {
+								name : 'actualStartDate',
+								index : 'actualStartDate',
+								width : 30
+							}
+							, {
+								name : 'actualEndDate',
+								index : 'actualEndDate',
+								width : 30
+							}],
+							postData : {},
+							rowNum : 10,
+							rowList : [ 10, 20, 40, 60, 100 ],
+							height : 200,
+							autowidth : true,
+							rownumbers : true,
+							pager : '#projectPage',
+							sortname : 'projectID',
+							viewrecords : true,
+							sortorder : "asc",
+							caption : "",
+							emptyrecords : "Empty records",
+							loadonce : false,
+							height: 230,
+							loadComplete : function() {
+							},
+							jsonReader : {
+								page : "page",
+								total : "total",
+								records : "records",
+								root : "rows",
+								repeatitems : false
+							},
+							gridComplete : function() {
+					            gridAction("#projectList", "<c:url value='/projects/' />", "projectID", false, false, false)
+					          	$('input[name*="jqg_projectList"]').hide();
+					    		$('input[id=cb_projectList]').hide();
+					    		
+							}
+						});
+		$("#projectList").jqGrid('navGrid', '#projectPage', {
+			edit : false,
+			add : false,
+			del : false,
+			search : false
+		}, {}, {}, {}, { // search
+			sopt : [ 'cn', 'eq' ],
+			closeOnEscape : true,
+			multipleSearch : false,
+			closeAfterSearch : true,
+			position: "center"
+		});
+
+		$("#projectList").navButtonAdd('#projectPage',
+			{ 	caption:"PDF", 
+				buttonicon:"ui-icon-circle-arrow-s", 
+				onClickButton: function(){
+					download('pdf');
+				},
+				position: "last", 
+				title:"", 
+				cursor: "pointer"
+			} 
+		);
+		
+		$("#projectList").navButtonAdd('#projectPage',
+			{ 	caption:"Excel", 
+				buttonicon:"ui-icon-circle-arrow-s", 
+				onClickButton: function(){
+					download('xls');
+				},
+				position: "last", 
+				title:"", 
+				cursor: "pointer"
+			} 
+		);
+		
+		$("#btnSearch").click(function(event){
+			event.preventDefault();	
+			gridReload();
+		});
+		$("#fieldValue").keydown(function(){
+			if(autoSearch){
+				//setTimeout(gridReload,500);	
+			} 			
+		});
+		$("#fieldName").change(function(){
+			if(autoSearch){
+				//setTimeout(gridReload,500);	
+			}
+		});
+		$("#autoSearch").change(function(){
+			autoSearch = $(this).attr('checked');
+		});
+		$("#projectTypeID, #employeeID, #customerID, #year").change(function(){
+			//setTimeout(gridReload,500);	
+		});
+	});
+	function gridReload(){ 
+		var fieldName =  'projectTypeName';
+		var fieldValue =  $("#projectTypeID").val();
+		var fieldName1 =  'employeeName'
+		var fieldValue1 =  $("#employeeID").val();
+		var fieldName2 =  'customerName'
+		var fieldValue2 =  $("#customerID").val();
+		var fieldYearName =  'actualStartDate';
+		var fieldYearValue =  $("#year").val();
+		$("#projectList").jqGrid('setGridParam',
+		{
+			url:"<c:url value='/projects/ajaxGrid.html'/>",
+			page:1,
+			mtype: "GET",
+			search: true,
+			postData: {
+				searchOper: function(){
+					return "cn";
+				},
+				searchField: function(){
+					return fieldName;
+				},
+				searchString: function(){
+					return fieldValue;
+				},
+				searchField1: function(){
+					return fieldName1;
+				},
+				searchString1: function(){
+					return fieldValue1;
+				},
+				searchField2: function(){
+					return fieldName2;
+				},
+				searchString2: function(){
+					return fieldValue2;
+				},
+				searchYearFiled: function(){
+					return fieldYearName;
+				},
+				searchYearString: function(){
+					return fieldYearValue;
+				}
+				
+			}
+		}).trigger("reloadGrid"); 
+	} 
+	function download(type) {
+		// Retrieve download token
+		// When token is received, proceed with download
+	/* 	$.get('${downloadTokenUrl}', function(response) {
+			// Store token
+			var token = response.message[0];
+			
+			// Show progress dialog
+			$('#msgbox').text('Processing download...');
+			$('#msgbox').dialog( 
+					{	title: 'Download',
+						modal: true,
+						buttons: null
+					});
+			
+			// Start download
+			//window.location = '${downloadUrl}'+'?token='+token+'&type='+type+'&projectTypeID='+$('#projectTypeID').val()+'&customerID='+$('#customerID').val()+'&employeeID='+$('#employeeID').val()+'&actualYear='+$('#year').val();
+			$('#token').val(token);
+			$('#type').val(type);
+			
+			document.frmDown.submit();
+
+			// Check periodically if download has started
+			var frequency = 1000;
+			var timer = setInterval(function() {
+				$.get('${downloadProgressUrl}', {token: token}, 
+						function(response) {
+							// If token is not returned, download has started
+							// Close progress dialog if started
+							if (response.message[0] != token) {
+								$('#msgbox').dialog('close');
+								clearInterval(timer);
+							}
+					});
+			}, frequency);
+			
+		}); */
+ 	 	if(type =='xls'){
+ 			$('#frm1').attr('action', "<c:url value='/projects/report/reportProjectExcel.html' />");
+ 			$('#frm1').submit();
+ 		}else if (type =='pdf'){
+			$('#frm1').attr('action',"<c:url value='/projects/report/reportProjectPDF.html'/>");
+ 			$('#frm1').submit();
+ 		} 
+	}
+</script>
+<form name='frmDown' id="frmDown" method="post" action='#'>
+	<input type="hidden" name="token" id="token" />
+	<input type="hidden" name="type" id="type" />
+	<input type="hidden" name="projectTypeID1" id="projectTypeID1" />
+	<input type="hidden" name="customerID1" id="customerID1" />
+	<input type="hidden" name="employeeID1" id="employeeID1" />
+	<input type="hidden" name="actualYear1" id="actualYear1" />
+</form>
+<div class="adminform">
+	<div class="opr">
+		
+		<form action="" id="frm1">
+		<fieldset>
+			<legend><spring:message code="lbl.filter"/></legend>
+			<table class="form" >
+				
+				<!-- <tr>
+					<td style="width: 120px;">
+					    <label for="projectTypeID">Project Name</label>
+					</td>
+					<td class="input">
+						<input type="text" class="textfield" id="fieldValue" />
+					</td>
+					<td style="text-align: right;float: right!important;"><input type="checkbox" id="autoSearch"  /></td>
+					<td valign="top">
+						<label for="autoSearch" >Auto Search</label>
+					</td>
+				</tr> -->
+				<tr>
+					<td style="width: 120px;">
+					    <label for="projectTypeID"><spring:message code="th.type"/></label>
+					</td>
+					<td style="width: 250px;padding-top: 6px;" class='input'>
+						<jsp:include page="/project-types/selectProjectTypeList.html"></jsp:include>
+					</td>
+					
+					<td style="width: 50px;">
+					    <label for="customerID"><spring:message code="th.customer"/></label>
+					</td>
+					<td style="width: 250px;" class='input'>
+						<jsp:include page="/customers/selectCustomerList.html"></jsp:include>
+					</td>
+				</tr>
+				<tr>
+					<td style="width: 120px;" class="PM">
+					    <label for="employeeID"><spring:message code="th.pm"/></label>
+					</td>
+					<td style="width: 250px;">
+						<spring:message code="lbl.select_a_pm" var="select_a_pm" />
+						<jsp:include page="/employees/selectEmployeeList.html?roleID=ROL02&id=employeeID&placeholder=${select_a_pm}&validate=required&require=require&width=250px"></jsp:include>
+					</td>
+					
+					<td style="width: 50px;">
+					    <label for="year"><spring:message code="th.actual_start_date"/></label>
+					</td>
+					<td style="width: 250px;" class='input'>
+						<jsp:include page="/projects/projectYear.html"></jsp:include>
+					</td>
+					<td>
+						<!-- <button id="btnSearch" class="search" style="margin-left:30px;">Search</button> -->
+					</td>
+					<td>
+						<button id="btnSearch" class="search"><spring:message code="button.preview"/></button>
+					</td>
+				</tr>
+			</table> 
+		</fieldset>
+		</form>
+		<form action="">
+			<fieldset>
+				<legend><spring:message code="lbl.project_list"/></legend>
+				<div>
+					<table id="projectList"></table>
+					<div id="projectPage"></div>
+					<div>
+					
+					</div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</div>
+<div class="clr"></div>

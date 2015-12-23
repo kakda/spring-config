@@ -1,0 +1,20 @@
+<!-- Chamroeun -->
+<%@ page contentType="text/html; charset=utf-8" session="true"
+	pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<div class="adminform">
+	<div class="break-crumbs"></div>
+	<div class="opr">
+		<form>
+			<fieldset>
+				<img style="width: 80px; margin: 20px;" alt=""
+					src="<c:url value='/images/main/symbol-error.png' />" />
+				<h3 style="color: red; margin-top: 70px;">
+					${exception.customMessage}</h3>
+				<%-- <h3 style="margin-left: 120px">
+					${exception.detailError}<br />
+				</h3> --%>
+			</fieldset>
+		</form>
+	</div>
+</div>

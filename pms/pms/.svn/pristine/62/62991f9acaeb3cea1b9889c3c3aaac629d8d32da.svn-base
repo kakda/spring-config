@@ -1,0 +1,367 @@
+/*-------------------------------Content-------------------------------*/
+div.cpanel-center {
+	text-align: center;
+	width: 100%;
+	font-size: 12px;
+}
+
+div.tabs {
+	width: 90%;
+	/*
+	 margin-left: 5%;
+	 margin-right: 5%;*/
+
+}
+
+/*-------------------------------Table Form & View-------------------------------*/
+table.view {
+	/*text-align: center;
+	 width: 90%;
+	 margin-left: 5%;
+	 margin-right: 5%;
+	 padding: 5px; */
+}
+
+table.form {
+	/* padding: 5px; */
+}
+
+table.view {
+	border-style: solid;
+	border-width: 1px;
+	border-collapse: collapse;
+	font-size: 12px;
+	border-color: gray;
+}
+
+div.tabs table.form, div.tabs table.view {
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+table.form td, table.view td {
+	/* padding:2px 4px 2px 11px; */
+	padding: 1px 5px 1px 11px;
+}
+
+table.view td.label, table.view td.value {
+	border: solid 1px;
+	border-color: gray;
+	border-collapse: collapse;
+}
+
+table.form td.header, table.view td.header {
+	font-size: 16px;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-align: left;
+}
+
+/*-------------------------------Table View-------------------------------*/
+table.view td.label {
+	text-align: left;
+	/* width: 90px; */
+}
+
+table.view td.value {
+	text-align: left;
+	width: 250px;
+	font-weight: bold;
+}
+
+/*-------------------------------Control-------------------------------*/
+table.form td.label {
+	text-align: left;
+	/* width: 100px; */
+}
+
+table.form td.input {
+	text-align: left;
+	min-width: 250px;
+}
+
+table.form td.button, table.view td.button {
+	text-align: left;
+	font-size: 12px;
+}
+
+input.textfield {
+	width: 100%;
+	/* width: 247px; */
+	font-size: 13px;
+	height: 21px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+table.form td.input select.choosefield {
+	width: 250px;
+}
+
+table.form td.button input, table.form td.button button, table.view td.button input, table.view td.button button, .button {
+	/* height: 30px; */
+}
+
+.form {
+
+}
+
+.required {
+	color: red;
+	float: right;
+	margin-top: 5px;
+	font-size: 180%;
+	font-weight: bold;
+}
+
+.mandatory {
+	color: red;
+	font-size: 20px;
+	position: absolute;
+	margin-top: 9px;
+	margin-left: -9px;
+	font-weight: bold;
+}
+
+.blue {
+	color: blue;
+}
+
+.textarea100 {
+	height: 50px;
+	resize: none;
+	font-size: 13px;
+	font-family: Arial, Helvetica, sans-serif;
+	width: 100%;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.radio-label {
+	clear: none;
+	display: block;
+	margin-right: 5px;
+}
+
+.title {
+	font-size: 170%;
+	text-align: right;
+	margin-right: 5px;
+}
+
+.search {
+	margin-left: 20px;
+}
+
+/* Sambath Kakda 16-07-2012 */
+
+.opr fieldset {
+	background-color: white;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	-o-border-radius: 10px;
+	border-radius: 10px;
+}
+
+.opr form fieldset legend {
+	font-size: 15px;
+	font-weight: 600;
+}
+.textarea {
+	height: 50px;
+	width: 248px;
+	resize: none;
+	font-size: 13px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+.textarea-wide {
+	height: 50px;
+	width: 617px;
+	resize: none;
+	font-size: 13px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+.opr fieldset legend table tr {
+	/* vertical-align: top; */
+}
+#loading {
+	position: fixed;
+	bottom: 0;
+	background: white;
+	text-align: center;
+	width: 100%;
+	border-top: 1px solid #e0dddc;
+	display: none;
+}
+#loading img {
+	display: block;
+	width: 31px;
+	height: 31px;
+	margin: 0 auto;
+}
+.break-crumbs {
+	margin-bottom: 10px;
+	margin-top: 10px;
+	font-size: 120%;
+	text-transform: capitalize;
+	font-weight: 600;
+}
+.break-crumbs img {
+	padding: 0 10px;
+}
+.message-alert {
+	margin-bottom: 10px;
+}
+.message-alert img {
+	padding-right: 7px;
+}
+.message-alert .message-valid {
+	padding: 5px;
+	padding-left: 15px;
+	background: #f6ffdf;
+	border: 1px solid #bae548;
+}
+.message-alert .message-invalid {
+	padding: 5px;
+	padding-left: 15px;
+	background: #ffdfe9;
+	border: 1px solid #f50b52;
+}
+.message-alert .message-warning {
+	padding: 5px;
+	padding-left: 15px;
+	background: #fbffb5;
+	border: 1px solid #d99e00;
+}
+.message-centered {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-top: -50px;
+	margin-left: -100px;
+	padding: 15px 30px;
+	background: white;
+	border: 1px solid gray;
+	font-size: 200%;
+	text-align: center;
+	color: black;
+}
+.select2-choice .chart, .select2-result-label .chart {
+	padding-right: 4px;
+}
+
+.form tr .input .select2-container + div + select {
+	left: inherit;
+	visibility: hidden;
+	display: inline;
+}
+/* Sambath Kakda 16-07-2012 */
+.red {
+	color: red;
+	font-size: 20px;
+}
+td.pink{
+	 background-color:#FFE0FF;
+}
+td.red{
+	background-color:#FFB2B2;
+}
+.red_normal {
+	color: red;
+	font-size: 20px;
+	padding: 10px 5px 0 0;
+	float: left;
+}
+form .hasDatepicker {
+	background: url("../images/icon/calendar.png") center right no-repeat;
+}
+
+.web_dialog_overlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	background: #000000;
+	opacity: .15;
+	filter: alpha(opacity=15);
+	-moz-opacity: .15;
+	-webkit-opacity: .15;
+	-o-opacity: .15;
+	z-index: 101;
+	display: none;
+}
+.web_dialog {
+	display: none;
+	position: fixed;
+	width: 600px;
+	top: 50%;
+	left: 50%;
+	margin-left: -300px;
+	margin-top: -200px;
+	background-color: #ffffff;
+	border: 2px solid #696969;
+	padding: 0px;
+	z-index: 102;
+	font-family: Verdana;
+	font-size: 10pt;
+	line-height: 200%;
+}
+.web_dialog ul {
+	margin-left: 10px;
+}
+.web_dialog ul li {
+	margin-left: 25px;
+}
+.web_dialog_title {
+	border-bottom: solid 2px #336699;
+	background-color: #696969;
+	padding: 4px 12px;
+	color: White;
+	font-weight: bold;
+}
+.web_dialog_title a {
+	color: White;
+	text-decoration: none;
+}
+.align_right {
+	text-align: right;
+}
+.Level2HeadingStyle {
+	font-weight: bold;
+	font-size: 15pt;
+	color: #2D84A7;
+	line-height: 20px;
+}
+.web_dialog tr.power-by{
+	background: url("../images/main/pink-painter.jpg") center left no-repeat;	
+}
+.random-developer li{
+	float: left;
+	width: 320px;
+	border: 1px solid #717171;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	padding: 10px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	-o-border-radius: 10px;
+	border-radius: 10px;
+	background: url("../images/main/pink-painter-face.jpg") bottom right no-repeat;	
+	
+}
+#tab .ui-tabs-panel table{width:100%;border-collapse: collapse;}
+#tab .ui-tabs-panel td,th{
+	border: 1px solid #444;
+	padding:10px 5px;
+	text-align: center;
+}
+#tab .ui-tabs-panel td:first-child{
+	width: 40%;
+}

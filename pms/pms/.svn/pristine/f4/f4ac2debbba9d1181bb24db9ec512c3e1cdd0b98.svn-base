@@ -1,0 +1,43 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+				$("#frmAdd").validationEngine();
+			});
+</script>
+<div class="adminform">
+	<div class="opr">
+	<div class="break-crumbs">
+		<a href="<c:url value='/unsubmit-reasons/index.html' />"><img src="<c:url value='/images/icon/list.png' />" align="absmiddle" alt="" /><spring:message code='lbl.unsubmit_reason_list'/></a>
+	</div>
+		<form action="<c:url value='/unsubmit-reasons/doAdd.html' />" id='frmAdd'
+			method="post">
+			<fieldset>
+				<legend><spring:message code='lbl.add_new_unsubmit_reason' /></legend>
+				<table class="form" cellspacing="0" cellpadding="0">
+					<tr>
+						<td class="label"><label for="reason"><spring:message code='lbl.reason' /></label><span class="required">*</span></td>
+
+						<td class="input">
+							<input id="reason" name="reason"
+							class="textfield unsubmitReasonName validate[required,maxSize[50],ajax[ajaxCheckUnsubmitReason]]" type="text" /></td>
+					</tr>
+					<tr style="vertical-align: top;">
+						<td class="label"><label for="description"><spring:message code='th.description' /></label></td>
+						<td class="input"><textarea name="description"
+								id="description" class="textarea description"></textarea></td>
+					</tr>
+					<tr>
+						<td colspan="4" class="button">
+							<button class="save" name="save" value="save"><spring:message code='button.save' /></button>
+							<button class="save" name="save" value="saveClose"><spring:message code='button.save_close' /></button>
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+		</form>
+	</div>
+</div>
+<div class="clr"></div>

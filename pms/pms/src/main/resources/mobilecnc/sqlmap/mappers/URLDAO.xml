@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mobilecnc.security.service.URLDAO">
+  
+	<select id="getRoles" parameterType="java.lang.String" resultType="java.lang.String">
+SELECT R.roleName FROM
+	(	SELECT * FROM 
+			PermissionURLs P 
+		WHERE UPPER(#{URL}) LIKE UPPER(accessURL)
+	)P,
+	RolePermissions RP,
+	Roles R
+WHERE P.permissionCode=RP.permissionCode
+AND R.roleID = RP.roleID
+
+	</select>	
+</mapper>

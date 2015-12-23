@@ -1,0 +1,170 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+
+		$('#quitDate').attr('disabled', 'disabled');
+		$('#reasontable').hide();
+
+		$("#joinDate").datepicker("setDate", new Date());
+		$("#quitDate").datepicker();
+		$("#frmAdd").validationEngine();
+
+		$('#employeeName').val("");
+		//$('#employeeName_chzn').trigger('change');
+		$('#employeeName').change(function() {
+			var e = $(this);
+			var v = e.val();
+			var opt = e.find('option[value="' + v + '"]');
+			$('#mobilePhone').val(opt.attr('telephone'));
+			$('#email').val(opt.attr('mail'));
+			$('#userName').val(opt.attr('login'));
+		});
+		$("#checkbox").click(function() {
+			if ($(this).is(':checked')) {
+				$('#quitDate').removeAttr('disabled');
+				$('#reasontable').show('slow');
+			} else {
+				$('#quitDate').attr('disabled', 'disabled');
+				$('#quitDate').val("");
+				$('#reasontable').hide('slow');
+			}
+		});
+	});
+</script>
+<div class="adminform">
+	<div class="break-crumbs">
+		<a href="<c:url value='/contractors/index.html' />"> <img
+			src="<c:url value='/images/icon/list.png' />" align="absmiddle"
+			alt="" /><spring:message code='lbl.contractor_list'/>
+		</a>
+	</div>
+	<div class="opr">
+		<form action="<c:url value='/contractors/doAdd.html'/>" id="frmAdd"
+			method="post">
+
+			<fieldset>
+				<legend><spring:message code='lbl.add_new_contractor'/></legend>
+				<table class="form" cellspacing="0" cellpadding="0">
+					<tr>
+						<td class="label"><label for="employeeName"><spring:message code='th.employee_name'/></label><span class="required">*</span></td>
+						<td class="input"><input id="employeeName"
+							name="employeeName"
+							class="textfield employeeName validate[required,maxSize[50],ajax[ajaxCheckUser]]"
+							type="text" /></td>
+						<td class="label"><label for="userName"><spring:message code='lbl.username'/>
+								</label><span class="required">*</span></td>
+						<td class="input"><input id="userName"
+							name="userName"
+							class="textfield validate[required, maxSize[20], ajax[ajaxCheckUser]]"
+							type="text" /></td>
+					</tr>
+
+					<tr>
+						<td class="label"><label for="password"><spring:message code='lbl.password'/></label><span
+							class="required">*</span></td>
+						<td class="input"><input id="password" name="password"
+							class="validate[required] textfield password" type="password" /></td>
+						<td class="label"><label for="confirmPassword"><spring:message code='lbl.confirm_password'/></label><span class="required">*</span></td>
+						<td class="input"><input id="confirmPassword"
+							name="confirmPassword"
+							class="validate[required, equals[password]] textfield password"
+							type="password" /></td>
+					</tr>
+
+					<tr>
+						<td class="label"><label for="company"><spring:message code='lbl.company'/></label></td>
+						<td class="input">
+						<spring:message code="select.select_company" var="select_company" />
+						<jsp:include page="/companies/selectCompanyList.html?id=companyID&placeholder=${select_company}&width=250px"></jsp:include>
+						</td>
+						<td class="label"><label for="title"><spring:message code='th.title'/></label></td>
+						<td class="input">
+						<spring:message code="select.select_title" var="select_title" />
+						<jsp:include page="/titles/selectTitleList.html?id=titleID&placeholder=${select_title}&width=250px"></jsp:include>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="label"><label for="role"><spring:message code='th.role'/></label></td>
+						<td class="input">
+						<spring:message code="select.select_role" var="select_role" />
+						<jsp:include page="/roles/selectRoleList.html?id=roleID&placeholder=${select_role}&width=250px"></jsp:include>
+						</td>
+						<td class="label"><label for="skill"><spring:message code='th.skill'/></label></td>
+						<td class="input">
+						<spring:message code="select.select_skills" var="select_skills" />
+						<jsp:include page="/skills/selectSkillList.html?id=skillID&placeholder=${select_skills}&multiple=true&width=250px"></jsp:include></td>
+					</tr>
+
+
+					<tr>
+						<td class="label"><label for="team"><spring:message code='th.team'/></label></td>
+						<td class="input">
+						<spring:message code="select.select_team" var="select_team" />
+						<jsp:include page="/teams/selectTeamList.html?id=teamID&placeholder=${select_team}&width=250px"></jsp:include>
+						</td>
+						<td class="label"><label for="email"><spring:message code='th.email'/></label><span
+							class="required">*</span></td>
+						<td class="input "><input id="email" name="email"
+							class="textfield email validate[required,custom[email]]"
+							type="text" /></td>
+					</tr>
+
+
+					<tr>
+						<!-- <td class="label"><label for="title">Company</label><span class="required">*</span></td>
+                  <td class="input">
+                  	<input id="companyName" name="companyName" class="textfield companyName validate[required,maxSize[50],ajax[ajaxCheckEmployee]]" type="text" />
+                  </td> -->
+						<td class="label"><label for="mobile"><spring:message code='lbl.mobile_phone'/></label><span
+							class="required">*</span></td>
+						<td class="input"><input id="mobilePhone" name="mobilePhone"
+							class="textfield mobilePhone validate[required]" type="text" />
+						</td>
+						<td class="label"><label for="companyPhone"><spring:message code='lbl.company_phone'/></label></td>
+						<td class="input"><input id="companyPhone"
+							name="companyPhone" class="textfield companyPhone" type="text" />
+						</td>
+					</tr>
+					<tr style="vertical-align: top;">
+						<td class="label"><label for="address"><spring:message code='lbl.address'/></label></td>
+						<td colspan="4" class="input"><textarea name="address"
+								id="address" class="textarea100 description"></textarea></td>
+					</tr>
+					<tr>
+						<td class="label"><label for="joinDate"><spring:message code='th.join_date'/></label><span
+							class="required">*</span></td>
+						<td class="input"><input id="joinDate" name="joinDate"
+							class="textfield date joinDate validate[required,maxSize[50],custom[date]]"
+							type="text" /></td>
+						<td class="label" style="position: absolute; margin: 5px 0 0 5px;"><input
+							type="checkbox" id="checkbox" />
+						<td class="label"
+							style="position: absolute; margin: 5px 0 0 40px;"><label
+							for="quitDate"><spring:message code='th.quit_date'/></label><span class="required"></span></td>
+						<td class="input"><input id="quitDate" name="quitDate"
+							class="textfield date quitDate validate[required,custom[date]]"
+							type="text" /></td>
+					</tr>
+
+					<tr id="reasontable">
+						<td class="label"><lable for="reason"><spring:message code='lbl.reason'/></lable></td>
+						<td class="input"><textarea id="reason" name="quitReason"
+								style="width: 240px;" class="validate[condRequired[quitDate]]"></textarea></td>
+					</tr>
+
+					<tr>
+						<td colspan="6" class="button">
+							<button class="save" name="save" value="save"><spring:message code='button.save'/></button>
+							<button class="save" name="save" value="saveClose"><spring:message code='button.save_close'/></button>
+						</td>
+					</tr>
+				</table>
+			</fieldset>
+		</form>
+	</div>
+</div>
+<div class="clr"></div>

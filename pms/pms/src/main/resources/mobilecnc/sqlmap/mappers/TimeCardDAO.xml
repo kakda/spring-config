@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mobilecnc.timeCards.service.TimeCardDAO">
+	
+	<resultMap id="timeCardVO" type="TimeCardVO">
+		<result property="timeCardID" column="timeCardID"/>
+        <result property="employeeID" column="employeeID"/>
+        <result property="year" column="year"/>
+		<result property="week" column="week"/>
+		<result property="monday" column="monday"/>
+		<result property="tuesday" column="tuesday"/>
+		<result property="wednesday" column="wednesday"/>
+		<result property="thursday" column="thursday"/>
+		<result property="friday" column="friday"/>
+		<result property="saturday" column="saturday"/>
+		<result property="sunday" column="sunday"/>
+		<result property="totalWorkingHour" column="totalWorkingHour"/>
+		<result property="submitted" column="submitted"/>
+        <result property="entryDate" column="entryDate"/>
+        <result property="entryBy" column="entryBy"/>
+        <result property="lastModifyDate" column="lastModifyDate"/>
+        <result property="lastModifyBy" column="lastModifyBy"/>
+        <result property="projectName" column="projectName"/>
+        <result property="employeeName" column="employeeName"/>
+        <result property="plannedAssignDate" column="plannedAssignDate"/>
+        <result property="plannedReleaseDate" column="plannedReleaseDate"/>
+        <result property="startDate" column="startDate"/>
+        <result property="endDate" column="endDate"/>
+        <result property="isDefault" column="isDefault"/>
+    </resultMap>
+    <resultMap id="timeCard" type="TimeCard">
+		<result property="timeCardID" column="timeCardID"/>
+        <result property="employeeID" column="employeeID"/>
+        <result property="year" column="year"/>
+		<result property="week" column="week"/>
+		<result property="monday" column="monday"/>
+		<result property="tuesday" column="tuesday"/>
+		<result property="wednesday" column="wednesday"/>
+		<result property="thursday" column="thursday"/>
+		<result property="friday" column="friday"/>
+		<result property="saturday" column="saturday"/>
+		<result property="sunday" column="sunday"/>
+		<result property="totalWorkingHour" column="totalWorkingHour"/>
+		<result property="submitted" column="submitted"/>
+        <result property="entryDate" column="entryDate"/>
+        <result property="entryBy" column="entryBy"/>
+        <result property="lastModifyDate" column="lastModifyDate"/>
+        <result property="lastModifyBy" column="lastModifyBy"/>
+    </resultMap>
+    
+    <resultMap id="timeCardProjectVO" type="TimeCardProjectVO">
+		<result property="timeCardProjectID" column="timeCardProjectID"/>
+		<result property="timeCardID" column="timeCardID"/>
+		<result property="projectID" column="projectID"/>
+		<result property="projectName" column="projectName"/>
+		<result property="monday" column="monday"/>
+		<result property="tuesday" column="tuesday"/>
+		<result property="wednesday" column="wednesday"/>
+		<result property="thursday" column="thursday"/>
+		<result property="friday" column="friday"/>
+		<result property="saturday" column="saturday"/>
+		<result property="sunday" column="sunday"/>
+		<result property="totalWorkingHour" column="totalWorkingHour"/>
+		<result property="projectTypeName" column="ProjectTypeName"/>
+    </resultMap>
+    
+    <resultMap id="timeCardUnsubmit" type="TimeCardUnsubmit">
+		<result property="timeCardUnsubmitID" column="timeCardUnsubmitID"/>
+		<result property="timeCardID" column="timeCardID"/>
+		<result property="unsubmitReasonID" column="unsubmitReasonID"/>
+		<result property="employeeID" column="employeeID"/>
+		<result property="approvedID" column="approvedID"/>
+		<result property="otherReason" column="otherReason"/>
+		<result property="entryDate" column="entryDate"/>
+		<result property="entryBy" column="entryBy"/>
+    </resultMap>
+    
+    <resultMap id="employeeReport" type="EmployeeReport">
+		<result property="projectID" column="projectID"/>
+		<result property="projectName" column="projectName"/>
+		<result property="workingHour" column="workingHour"/>
+		<result property="year" column="year"/>
+		<result property="week" column="week"/>
+    </resultMap>
+    
+    <resultMap id="timeCardDaily" type="TimeCardDaily">
+		<result property="timeCardID" column="timeCardID"/>
+		<result property="employeeID" column="employeeID"/>
+		<result property="workingHour" column="workingHour"/>
+		<result property="tDate" column="tDate"/>
+    </resultMap>
+    
+	
+    <resultMap id="reportOfProject" type="ReportOfProject">
+		<result property="timeCardID" column="timeCardID"/>
+		<result property="employeeID" column="employeeID"/>
+		<result property="employeeName" column="employeeName"/>
+		<result property="projectID" column="projectID"/>
+		<result property="actualStartDate" column="actualStartDate" />
+		<result property="actualEndDate" column="actualEndDate" />
+		<result property="year" column="year"/>
+		<result property="week" column="week"/>
+		<result property="dw" column="dw"/>
+		<result property="tDate" column="tDate"/>
+		<result property="workingHour" column="workingHour"/>
+		<result property="projectTypeName" column="projectTypeName"/>
+    </resultMap>
+    
+    <resultMap id="reportOfTeam" type="ReportOfProject">
+		<result property="timeCardID" column="timeCardID"/>
+		<result property="employeeID" column="employeeID"/>
+		<result property="employeeName" column="employeeName"/>
+		<result property="projectID" column="projectID"/>
+		<result property="projectName" column="projectName"/>
+		<result property="year" column="year"/>
+		<result property="week" column="week"/>
+		<result property="dw" column="dw"/>
+		<result property="tDate" column="tDate"/>
+		<result property="workingHour" column="workingHour"/>
+		<result property="teamID" column="teamID"/>
+		<result property="teamName" column="teamName"/>
+    </resultMap>
+    
+    <resultMap id="reportByBillable" type="ReportOfProject">
+		<result property="projectID" column="projectID"/>
+		<result property="projectName" column="projectName"/>
+		<result property="tDate" column="tDate"/>
+		<result property="workingHour" column="workingHour"/>
+    </resultMap>
+    
+    <resultMap id="timeCardDetail" type="TimeCardDetail">
+		<result property="projectCode" column="Project Code"/>
+		<result property="projectName" column="Project Name"/>
+		<result property="teamName" column="Team Name"/>
+		<result property="employeeName" column="Employee Name"/>
+		<result property="tDate" column="Date"/>
+		<result property="workingHour" column="Working Hour"/>
+    </resultMap>
+    
+	<select id="getTimeCardEntry" parameterType="com.mobilecnc.timeCards.EntryParameter" resultMap="timeCardProjectVO" statementType="CALLABLE">
+    	{ call [dbo].[getTimeCardEntries](#{employeeID},#{startDate},#{endDate}) }
+    </select>
+
+	<select id="getEmployeeReport" parameterType="com.mobilecnc.timeCards.EntryParameter" resultMap="employeeReport" statementType="CALLABLE">
+    	{ call [dbo].[getTotalTimeCardGroupByEmployeeProject](#{employeeID},#{startDate},#{endDate}) }
+    </select>
+    
+	<select id="getEmployeePeriodReport" parameterType="com.mobilecnc.timeCards.EntryParameter" resultMap="timeCardDaily" statementType="CALLABLE">
+    	{ call [dbo].[getTotalTimeCardGroupByEmployeePeriod](#{employeeID},#{startDate},#{endDate}) }
+    </select>
+    
+	<select id="getProjectFilterByDay" parameterType="com.mobilecnc.timeCards.EntryParameter" resultMap="timeCardProjectVO" statementType="CALLABLE">
+    	{ call [dbo].[getTimeCardProjects](#{employeeID}, #{tDate}) }
+    </select>
+    
+	<select id="getTimeCardOfProject" parameterType="String" resultMap="reportOfProject" statementType="CALLABLE">
+    	{ call [dbo].[getReportTimeCardOfProject](#{projectID}) }
+    </select>
+    
+    <select id="getTimeCardOfProjectByEmployeeID" parameterType="String" resultMap="reportOfProject" statementType="CALLABLE">
+    	{ call [dbo].[getReportTimeCardOfProjectByemployeeID](#{projectID},#{staffID}) }
+    </select>
+	
+    <select id="getTimeCardOfTeam" parameterType="com.mobilecnc.timeCards.EntryParameter" resultMap="reportOfTeam" statementType="CALLABLE">
+    	{ call [dbo].[getReportTimeCardOfTeam](#{startDate}, #{endDate}, #{teamID}) }
+    </select>
+    
+    <select id="getTimeCardByBillable" parameterType="com.mobilecnc.timeCards.EntryParameter" resultMap="reportByBillable" statementType="CALLABLE">
+    	{ call [dbo].[getReportTimeCardByBillabled](#{startDate}, #{endDate}, #{billable}) }
+    </select>
+    
+	<select id="checkTimeCardSubmitted" parameterType="com.mobilecnc.timeCards.TimeCard" resultMap="timeCard">
+		<![CDATA[
+			SELECT TOP (1) * FROM TimeCards WHERE timeCardID = #{timeCardID}
+		]]>	
+	</select>
+
+	<select id="checkExistingTimeCard" parameterType="com.mobilecnc.timeCards.TimeCardVO" resultType="int">		
+		<![CDATA[
+			SELECT COUNT(timeCardID) AS resultFound FROM TimeCards WHERE year = #{year} AND week = #{week} AND employeeID = #{employeeID} 
+		]]>	 
+	</select>
+	
+	<select id="getTimeCardIDByDate" parameterType="com.mobilecnc.timeCards.TimeCardVO" resultType="String">		
+		<![CDATA[
+			SELECT timeCardID FROM TimeCards WHERE year = #{year} AND week = #{week} AND employeeID = #{employeeID} 
+		]]>	 
+	</select>
+	
+	<select id="getTimeCardID" parameterType="String" resultType="String">		
+		<![CDATA[
+			SELECT SUBSTRING(timeCardID, 9, 12) AS id
+			FROM   TimeCards
+			WHERE  (SUBSTRING(timeCardID, 1, 8) = #{prefix})
+		]]>	 
+	</select>
+	
+	<select id="getTotalTimeCardID" parameterType="String" resultType="int">		
+		<![CDATA[
+			SELECT COUNT(timeCardID) AS id
+			FROM   TimeCards
+			WHERE  (SUBSTRING(timeCardID, 1, 8) = #{prefix})
+		]]>	 
+	</select>
+		
+	<select id="getLastTimeCardID" parameterType="String" resultType="String">		
+		<![CDATA[
+			SELECT TOP (1) SUBSTRING(timeCardID, 9, 12) AS id
+			FROM   TimeCards
+			WHERE  (SUBSTRING(timeCardID, 1, 8) = #{prefix}) ORDER BY id DESC
+		]]>	 		
+	</select>
+	
+	<insert id="insertTimeCard" parameterType="com.mobilecnc.timeCards.TimeCardVO">
+		<![CDATA[
+			INSERT INTO TimeCards (timeCardID, employeeID, year, week, monday, tuesday, wednesday, thursday, friday, saturday, sunday, entryDate, entryBy, lastModifyDate, lastModifyBy, totalWorkingHour, submitted)
+			VALUES (#{timeCardID}, #{employeeID}, #{year}, #{week}, #{monday}, #{tuesday}, #{wednesday}, #{thursday}, #{friday}, #{saturday}, #{sunday}, getDate(), #{entryBy}, getDate(), #{lastModifyBy}, #{totalWorkingHour}, #{submitted})
+		]]>	 
+	</insert>
+	
+	<update id="updateTimeCard" parameterType="com.mobilecnc.timeCards.TimeCardVO">  
+		<![CDATA[
+			UPDATE TimeCards SET 
+				employeeID = #{employeeID},
+				monday = #{monday},
+				tuesday = #{tuesday},
+				wednesday = #{wednesday},
+				thursday = #{thursday},
+				friday = #{friday},
+				saturday = #{saturday},
+				sunday = #{sunday},
+				lastModifyBy = #{lastModifyBy},
+				lastModifyDate = getDate(),
+				totalWorkingHour = #{totalWorkingHour}
+			WHERE year = #{year} AND week = #{week} AND employeeID = #{employeeID} 
+		]]>
+	</update>
+	
+	<delete id="deleteProject" parameterType="int">
+		<![CDATA[
+			DELETE FROM TimeCardProjects WHERE timeCardProjectID = #{timeCardProjectID}
+		]]>
+	</delete>
+	
+	<delete id="submitTimeCard" parameterType="com.mobilecnc.timeCards.TimeCardVO">
+		<![CDATA[
+			UPDATE TimeCards SET
+			submitted = #{submitted},
+			lastModifyBy = #{lastModifyBy},
+			lastModifyDate = getdate()			
+			WHERE timeCardID = #{timeCardID}
+		]]>
+	</delete>
+	<!--
+	<delete id="deleteProjectFromTimeCard" parameterType="com.mobilecnc.timeCards.TimeCardVO">
+			<![CDATA[
+				DELETE FROM TimeCards WHERE 
+				year = #{year} AND 
+				week = #{week} AND 
+				lastModifyDate != #{lastModifyDate,jdbcType=DATE}  AND 
+				employeeID = #{employeeID} AND 
+				lastModifyBy = #{lastModifyBy} AND
+				totalWorkingHour = 0
+			]]>
+		</delete>-->
+	
+	
+	<insert id="insertTimeCardProject" parameterType="com.mobilecnc.timeCardProjects.TimeCardProjectVO" >
+		<![CDATA[		
+			INSERT INTO TimeCardProjects (projectID, timeCardID, monday, tuesday, wednesday, thursday, friday, saturday, sunday, totalWorkingHour)
+			VALUES (#{projectID}, #{timeCardID}, #{monday}, #{tuesday}, #{wednesday}, #{thursday}, #{friday}, #{saturday}, #{sunday}, #{totalWorkingHour})
+		]]>
+	</insert>
+	
+	<insert id="insertTimeCardUnsubmit" parameterType="TimeCardUnsubmit">
+		<![CDATA[	
+			INSERT INTO TimeCardUnsubmits (timeCardUnsubmitID, timeCardID, unsubmitReasonID, employeeID, approvedID, otherReason, entryDate, entryBy)
+			VALUES (#{timeCardUnsubmitID}, #{timeCardID}, #{unsubmitReasonID}, #{employeeID}, #{approvedID}, #{otherReason}, getdate(), #{entryBy})
+			]]>
+	</insert>
+	
+	<update id="updateTimeCardProject" parameterType="com.mobilecnc.timeCardProjects.TimeCardProjectVO" >
+		<![CDATA[	
+			UPDATE TimeCardProjects
+			SET monday = #{monday},
+				tuesday = #{tuesday},
+				wednesday = #{wednesday},
+				thursday = #{thursday},
+				friday = #{friday},
+				saturday = #{saturday},
+				sunday = #{sunday},
+				totalWorkingHour = #{totalWorkingHour}
+			WHERE timeCardProjectID = #{timeCardProjectID}
+		]]>
+	</update>
+	
+	
+	<select id="getTimeCardDetail" parameterType="com.mobilecnc.timeCards.EntryParameter" resultMap="timeCardDetail" statementType="CALLABLE">
+    	{ call [dbo].[SP_EmployeeTimeCard_Month](#{year},#{minMonth},#{maxMonth}) }
+    </select>
+    
+    <select id="getProjectTypeList" parameterType="String" resultMap="reportOfProject">
+    	select P.projectID, P.projectName , PT.projectTypeName,E.employeeName,sum(T.totalWorkingHour) as workingHour
+		from 
+			ProjectTypes PT inner join ( Projects P inner join 
+								(TimeCardProjects TCP inner join 
+								( TimeCards T inner join Employees E on T.employeeID=E.employeeID) 
+								on TCP.timeCardID=T.timeCardID) 
+								on P.projectID=TCP.projectID ) 
+								on PT.projectTypeID=P.projectTypeID
+		where PT.projectTypeID=#{ProjectTypeID}	
+		group by P.projectName,PT.projectTypeName,E.employeeName,P.projectID 
+		order by P.projectName
+    </select>
+</mapper>

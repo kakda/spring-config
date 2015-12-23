@@ -1,0 +1,1259 @@
+<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
+
+<script type="text/javascript">
+	var dateFormat = "yyyy-MM-dd";
+	var lastsel;
+	var timeCardProjectId = new Array();
+	var isSubmitted = false;
+	var timeCardID = null;
+	var reload = false;
+	var g = "#timeCardList";
+	var p = "#timeCardPage";
+	var cellEdit,elementSelect;
+	var pStartDate;
+	var pEndDate;
+	var HolidayWeek = [];
+	
+	$(window).load(function(){
+		var mon = new Date();
+		$("#weekDate").datepicker('setDate', mon);
+		mon.setDate(mon.getDate() + 1 - (mon.getDay() || 7));
+		var colNames = generateDateRangColumn(mon);
+		var colModels = getColumnModels();
+		renderNewTimeCard(g, p, colNames, colModels, mon);
+	});
+	
+	
+	$(document).ready(function() {
+		$("#timeCardList input[type=text]").live("focus", function(){
+			$(this).select();			
+		});
+		$('.btncopy').click(function(){
+			var data="";
+			var mon = $("#weekDate").datepicker('getDate');
+			mon.setDate(mon.getDate() + 1 - (mon.getDay() || 7));
+// 			mon.add(-7).days();
+			var startDate = mon.add(-6).days().toString(dateFormat);
+			var year = mon.getFullYear();
+			var week = mon.getWeek();
+			var endDate = mon.add(7).days().toString(dateFormat);
+			data += "startDate=" + startDate;
+			data += "&year=" + year;
+			data += "&endDate=" + endDate;
+			$.ajax({
+				data:{
+					startDate: function(){
+						return startDate;
+					},
+					endDate: function(){
+						return endDate;
+					},
+					year : function(){
+						return year;
+					},
+					week : function(){
+						return week;
+					}
+				},
+				url : "<c:url value='/time-cards/entryGetpreviouseMonth.html'/>",
+				type : "post",
+				dataType: "json",
+				success : function(result){
+// 					alert(JSON.stringify(result));
+					renderLastWeekValue(result);
+		
+				}
+			});
+					return false;
+		});
+		$(".save").click(function(event){
+			event.preventDefault();
+			var message = validateSubmittedData(g);            				
+			if(message.length == 0){
+				saveEntry(g);			
+			}else{
+				$(".message-centered").hide();
+				$("#dialog").html(message);
+		        $("#dialog").dialog({
+	                resizable: false,
+	                width: 400,
+	                height: 'auto',
+	                modal: true,
+	                title: "<spring:message code='dialog.title.warning'/>",
+	                position: "center",
+	                buttons: {
+	                	"<spring:message code='dialog.button.ok'/>": function () {                	
+	                    	$(this).dialog("close");
+	                    }
+	                }
+	            });
+		        $("#loading").hide();
+    		}
+		});
+		
+		$('#projectType').change(function(){
+			reloadProject(pStartDate,pEndDate);
+		});
+		
+		$(".submit").click(function(event){
+			event.preventDefault();
+			var message = validateSubmittedData(g);            				
+			if(message.length == 0){
+	            $("#dialog").html("<spring:message code='message.time_card.confirm_submit'/>");
+	            $("#dialog").dialog({
+	                resizable: false,
+	                height: 'auto',
+	                modal: true,
+	                title: "<spring:message code='dialog.title.warning'/>",
+	                position: "center",
+	                buttons: {
+	                    "<spring:message code='dialog.button.ok'/>": function () {
+	            			$(".message-centered").html("<spring:message code='message.time_card.saving'/>");
+	            			$(".message-centered").show('fast', function() {
+	                				saveEntry(g);
+	                				submitEntry(g);
+	            			});               	
+	                    	$(this).dialog("close");
+	                    },
+	                    "<spring:message code='dialog.button.cancel'/>": function(){
+	                    	$(this).dialog("close");
+	                    }
+	                }
+	            });			
+			}else{
+				$(".message-centered").hide();
+				$("#dialog").html(message);
+		        $("#dialog").dialog({
+	                resizable: false,
+	                width: 400,
+	                height: 'auto',
+	                modal: true,
+	                title: "<spring:message code='dialog.title.warning'/>",
+	                position: "center",
+	                buttons: {
+	                	"<spring:message code='dialog.button.ok'/>": function () {                	
+	                    	$(this).dialog("close");
+	                    }
+	                }
+	            });
+		        $("#loading").hide();
+    		}
+			
+		});
+		$("#weekDate").datepicker({
+			maxDate: 0,
+			setDate: new Date(),
+			onSelect : function() {
+				var mon = $(this).datepicker('getDate');
+				mon.setDate(mon.getDate() + 1 - (mon.getDay() || 7));
+				var colNames = generateDateRangColumn(mon);
+				var colModels = getColumnModels();
+				renderNewTimeCard(g, p, colNames, colModels, mon);
+			}
+		});
+		$("#projectID").chosen();
+		
+		$("#prev").click(function(event){
+			event.preventDefault();
+			var mon = $("#weekDate").datepicker('getDate');
+			mon.setDate(mon.getDate() + 1 - (mon.getDay() || 7));
+			movePrevWeek(mon);
+		});
+		$("#next").click(function(event){
+			event.preventDefault();
+			var mon = $("#weekDate").datepicker('getDate');
+			mon.setDate(mon.getDate() + 1 - (mon.getDay() || 7));
+			moveNextWeek(mon);
+		});
+		$("#addProject").click(function(event){
+			event.preventDefault();
+			var form = ".form";
+			$(form).validationEngine();
+			var isValidate = $(form).validationEngine("validate");
+			if(isValidate){ 
+				if(!checkExistingProject(g, $("#projectID").val())){
+					addNewProject(g,$('#projectType option:selected').html() ,$("#projectID").val(), $("#projectID option:selected").html());
+					$("#projectID option[value='"+$("#projectID").val()+"']").remove();
+					$("#projectID").trigger("liszt:updated");
+				}else{
+					$("#dialog").html("The Project [" + $("#projectID option:selected").html() + "] is already exist.");
+    	            $("#dialog").dialog({
+    	                resizable: false,
+    	                height: 'auto',
+    	                modal: true,
+    	                title: "<spring:message code='dialog.title.error'/>",
+    	                position: "center",
+    	                buttons: {
+    	                    "<spring:message code='dialog.button.ok'/>": function () {
+    	                        $(this).dialog("close")
+    	                    }
+    	                }
+    	            })
+				}
+			}
+		});
+		$(".btnDeleteSelected").click(function(event){
+			event.preventDefault();
+			deleteSelectedRecord(g);
+		});
+	});
+	
+	function renderLastWeekValue(result){
+		 var d = $(g).jqGrid("getDataIDs");
+		 	for(var key in result.rows){
+
+			        for (var e = 0; e < d.length; e++) {
+			            var f = d[e], row = "", sumField = 0, monday = 0, tuesday = 0, wednesday = 0, thursday = 0, friday = 0, saturday = 0, sunday = 0;
+			            	            
+			            // Add blank to the zero value of timecard
+			            if(result.rows[key].projectID == $(g).jqGrid("getCell",f,"projectID")){
+			            	
+						monday 		= result.rows[key].monday == 0 ? '' : result.rows[key].monday;
+						tuesday 	= result.rows[key].tuesday == 0 ? '' : result.rows[key].tuesday;
+						wednesday 	= result.rows[key].wednesday == 0 ? '' : result.rows[key].wednesday;
+						thursday 	= result.rows[key].thursday == 0 ? '' : result.rows[key].thursday;
+						friday 		= result.rows[key].friday == 0 ? '' : result.rows[key].friday;
+						saturday 	= result.rows[key].saturday == 0 ? '' : result.rows[key].saturday;
+						sunday 		= result.rows[key].sunday == 0 ? '' : result.rows[key].sunday;
+							
+						// Calculate summary for each rows					
+			            	
+			            sumField += result.rows[key].monday;
+			            sumField +=  result.rows[key].tuesday
+			            sumField += result.rows[key].wednesday;
+			            sumField += result.rows[key].thursday;
+			            sumField += result.rows[key].friday;
+			            sumField += result.rows[key].saturday;
+			            sumField += result.rows[key].sunday;
+	            
+			            $(g).jqGrid("setRowData", f, {
+			                act: row,
+			                monday : monday,
+			                tuesday : tuesday,
+			                wednesday : wednesday,
+			                thursday : thursday,
+			                friday : friday,
+			                saturday : saturday,
+			                sunday : sunday,
+			                summaryField : sumField.toNumber()
+			            });
+							break;
+			            }
+	    				
+			        }
+		 	}
+		 	var total = result.userdata.monday + result.userdata.tuesday + result.userdata.wednesday + result.userdata.thursday + result.userdata.friday + result.userdata.saturday + result.userdata.sunday;
+		 	$(g).jqGrid('footerData','set', {monday: result.userdata.monday ,
+		 									tuesday: result.userdata.tuesday ,	
+		 									wednesday: result.userdata.wednesday , 
+		 									thursday: result.userdata.thursday ,
+		 									friday: result.userdata.friday,
+		 									saturday: result.userdata.saturday,
+		 									sunday: result.userdata.sunday, 
+		 									summaryField : total});
+	}
+	
+	
+	function saveEntry(grid){
+		var dateSelected = $("#weekDate").datepicker('getDate');
+		$(grid).jqGrid('saveRow', lastsel, 
+				{ 
+				    aftersavefunc: function() {
+						updateEntry(grid);
+				        return true; 
+				    },
+				});
+		lastsel = 0;
+
+        $("#loading").slideToggle(100, function () {
+        	var data = "";
+			var year = dateSelected.getFullYear();
+			var week = dateSelected.getWeek();
+			var month = dateSelected.toString("MM");
+			var day = dateSelected.toString("dd");
+			var footerData = $(grid).footerData('get');
+			var userdata = $(grid).jqGrid('getGridParam', 'userData');
+			var timeCardID;
+			
+        	for (n = 0; n < timeCardProjectId.length; n++){
+				if(timeCardProjectId[n]!=false){
+    				$.ajax({
+    					data : "timeCardProjectID="+timeCardProjectId[n],
+    					url : "<c:url value='/time-cards/deleteProject.html' />",
+    					type : "post",
+    					dataType : "json",
+    					async : false
+    				});
+				}
+        	}
+        	
+        	data += "year=" + year;
+        	data += "&week=" + week;
+        	data += "&month=" + month;
+        	data += "&day=" + day;
+        	data += "&monday=" + footerData.monday;
+        	data += "&tuesday=" + footerData.tuesday;
+        	data += "&wednesday=" + footerData.wednesday;
+        	data += "&thursday=" + footerData.thursday;
+        	data += "&friday=" + footerData.friday;
+        	data += "&saturday=" + footerData.saturday;
+        	data += "&sunday=" + footerData.sunday;
+        	data += "&timeCardID=" + userdata.timeCardID;
+
+        	$.ajax({
+				data : data,
+				url : "<c:url value='/time-cards/doAdd.html' />",
+				type : "post",
+				dataType : "json",
+				async : false,
+				success : function(msg){
+					timeCardID = msg;
+				}
+			});
+			
+        	// Save Entry
+        	
+        	$(grid).find("tr").each(function(){
+    			var rowId = $(this).attr("id");
+                var projectID = $(grid).jqGrid("getCell", rowId, "projectID");
+                if(projectID != false){
+                	
+    				var monday = $(grid).jqGrid("getCell", rowId, "monday") == '' ? 0 : $(grid).jqGrid("getCell", rowId, "monday") ;
+    				var tuesday = $(grid).jqGrid("getCell", rowId, "tuesday") == '' ? 0 : $(grid).jqGrid("getCell", rowId, "tuesday") ;
+    				var wednesday = $(grid).jqGrid("getCell", rowId, "wednesday") == '' ? 0 : $(grid).jqGrid("getCell", rowId, "wednesday") ;
+    				var thursday = $(grid).jqGrid("getCell", rowId, "thursday") == '' ? 0 : $(grid).jqGrid("getCell", rowId, "thursday") ;
+    				var friday = $(grid).jqGrid("getCell", rowId, "friday") == '' ? 0 : $(grid).jqGrid("getCell", rowId, "friday") ;
+    				var saturday = $(grid).jqGrid("getCell", rowId, "saturday") == '' ? 0 : $(grid).jqGrid("getCell", rowId, "saturday") ;
+    				var sunday = $(grid).jqGrid("getCell", rowId, "sunday") == '' ? 0 : $(grid).jqGrid("getCell", rowId, "sunday") ;
+    				var timeCardProjectID = $(grid).jqGrid("getCell", rowId, "timeCardProjectID");
+    				var totalWorkingHour = Number(monday)+Number(tuesday)+Number(wednesday)+Number(thursday)+Number(friday)+Number(saturday)+Number(sunday);
+    				
+    				data = "timeCardID="+timeCardID;
+    				data += "&monday="+monday;
+    				data += "&tuesday="+tuesday;
+    				data += "&wednesday="+wednesday;
+    				data += "&thursday="+thursday;
+    				data += "&friday="+friday;
+    				data += "&saturday="+saturday;
+    				data += "&sunday="+sunday;
+    				data += "&projectID="+projectID;
+    				data += "&totalWorkingHour="+totalWorkingHour;
+    				data += "&timeCardProjectID="+timeCardProjectID;
+    				$.ajax({
+    					data : data,
+    					url : "<c:url value='/time-cards/saveEntry.html' />",
+    					type : "post",
+    					dataType : "json",
+    					async : false,
+    					success : function(msg){
+    						if(msg != true){
+    							alert("Error");
+    						}
+    					}
+    				});
+                }
+    		}); 
+
+    		$(grid).trigger("reloadGrid");
+			$("#loading").slideToggle(600, function(){
+				$(".message-information .message-valid span").html("<spring:message code='message.time_card.save' />");
+				$(".message-information").show();
+			});
+        });
+		
+	}
+	
+	function submitEntry(grid){
+        $("#loading").slideToggle(100, function () {
+        	checkProcessDataCompleted(grid);
+        });
+	}
+	
+	function checkProcessDataCompleted(grid){
+        if(reload){  
+        	setTimeout(function(){
+        		doSubmit(grid);	
+        	}, 300);
+        	
+        }else{
+        	checkProcessDataCompleted(grid)
+        }
+	}
+	
+	function doSubmit(grid){
+		$(".message-centered").html("<spring:message code='message.time_card.submitting'/>");
+		var userdata = $(grid).jqGrid('getGridParam', 'userData');
+        var data= "timeCardID="+ userdata.timeCardID;
+		$.ajax({
+			data : data,
+			url : "<c:url value='/time-cards/submitTimeCard.html' />",
+			type : "post",
+			dataType : "json",
+			async : false,
+			success: function(msg){
+				$(grid).find("input[type='checkbox']").attr("disabled", "disabled");
+	    		$(grid).trigger("reloadGrid");
+			}
+		});
+		$("#loading").slideToggle(100, function(){
+			$(".message-information .message-valid span").html("<spring:message code='message.time_card.submit' />");
+			$(".message-information").show();
+			$(".message-centered").hide();
+		});
+	}
+	
+	function validateSubmittedData(grid){
+		$(grid).jqGrid('saveRow', lastsel, 
+			{ 
+			    aftersavefunc: function() {
+					updateEntry(grid);
+			        return true; 
+			    },
+		});
+		lastsel = 0;
+		var message = "";
+		var footerData = $(grid).footerData('get');
+		var monday = footerData.monday;
+		var tuesday = footerData.tuesday;
+		var wednesday = footerData.wednesday;
+		var thursday = footerData.thursday;
+		var friday = footerData.friday;
+		var saturday = footerData.saturday;
+		var sunday = footerData.sunday;
+		if(Number(monday)>24){
+			message += "<dd>- <spring:message code='message.time_card.total_hour_of_monday'/> "+ Number(monday)+"</b> > 24.</dd>";
+		}
+		if(Number(tuesday)>24){
+			message += "<dd>- <spring:message code='message.time_card.total_hour_of_tuesday'/> "+Number(tuesday)+"</b> > 24.</dd>";
+		}
+		if(Number(wednesday)>24){
+			message += "<dd>- <spring:message code='message.time_card.total_hour_of_wednesday'/> "+Number(wednesday)+"</b> > 24.</dd>";
+		}
+		if(Number(thursday)>24){
+			message += "<dd>- <spring:message code='message.time_card.total_hour_of_thursday'/> "+Number(thursday)+"</b> > 24.</dd>";
+		}
+		if(Number(friday)>24){
+			message += "<dd>- <spring:message code='message.time_card.total_hour_of_friday'/> "+Number(friday)+"</b> > 24.</dd>";
+		}
+		if(Number(saturday)>24){
+			message += "<dd>- <spring:message code='message.time_card.total_hour_of_saturday'/> "+Number(saturday)+"</b> > 24.</dd>";
+		}
+		if(Number(sunday)>24){
+			message += "<dd>- <spring:message code='message.time_card.total_hour_of_sunday'/> "+Number(sunday)+"</b> > 24.</dd>";
+		}
+		if(message.length>0){
+			message = "<div> <spring:message code='message.time_card.operation_could_not_submit'/> "+message+"</div>";
+		}
+		return message;
+	}
+
+	function deleteSelectedRecord(grid){
+		$(grid).jqGrid('saveRow', lastsel, 
+				{ 
+				    aftersavefunc: function() {
+						updateEntry(grid);
+				        return true; 
+				    },
+				});
+		$(grid).jqGrid('restoreRow',lastsel); 
+		// var selectedRows = $(grid).getGridParam("selarrrow");
+		var selectedRows = $(".cbox:checked").not("#cb_timeCardList");
+        if (selectedRows.length>0) {
+            $("#dialog").html("<spring:message code='message.delete_selected'/>");
+            $("#dialog").dialog({
+                resizable: false,
+                height: 'auto',
+                modal: true,
+                title: "<spring:message code='dialog.title.warning'/>",
+                position: "center",
+                buttons: {
+                    "<spring:message code='dialog.button.ok'/>": function () {
+                        for (var i = 0; i < selectedRows.length; i++) {
+                            var projectID = $(grid).jqGrid("getCell", selectedRows.closest("tr").attr("id"), "projectID");
+                            var projectName = $(grid).jqGrid("getCell", selectedRows.closest("tr").attr("id"), "projectName");
+                            var timeCardProjectID = $(grid).jqGrid("getCell", selectedRows.closest("tr").attr("id"), "timeCardProjectID");
+
+                            $("#projectID").append("<option value='"+projectID+"'>"+projectName+"</option>");
+                            $("#projectID").trigger("liszt:updated");
+                            
+                            $(grid).jqGrid("delRowData", selectedRows.closest("tr").attr("id"))
+                            timeCardProjectId.push(timeCardProjectID);
+                        }  
+                        updateEntry(grid);                	
+                    	$(this).dialog("close");
+                    },
+                    "<spring:message code='dialog.button.cancel'/>": function(){
+                    	$(this).dialog("close");
+                    }
+                }
+            });
+ 
+        }else{
+            $("#dialog").html("<spring:message code='message.please_select_record'/>");
+            $("#dialog").dialog({
+                resizable: false,
+                height: 'auto',
+                modal: true,
+                title: "<spring:message code='dialog.title.error'/>",
+                position: "center",
+                buttons: {
+                	"<spring:message code='dialog.button.ok'/>": function () {
+                        $(this).dialog("close")
+                    }
+                }
+            })
+        }
+	}
+	
+	function checkExistingProject(grid, newProjectID){
+		var bool = false;
+		$(grid).find("tr").each(function(){
+			var rowId = $(this).attr("id");
+            var projectID = $(grid).jqGrid("getCell", rowId, "projectID");
+            if($.trim(projectID) == $.trim(newProjectID)){
+            	bool = true;
+            }
+		});
+		return bool;
+	}
+	
+	function calculateSummary(grid, rowId, colId, col){
+
+		
+        var d = $(grid).jqGrid("getDataIDs"), totalCol = col.val().toNumber(), $tr = col.parent().parent(), summaryRow = 0, sumField = 0;
+        
+        // Get summary current row
+        $tr.find("input[type='text']").each(function(){
+        	summaryRow += $(this).val().toNumber();
+        });
+        
+        // Set summary current row
+        $(grid).jqGrid("setRowData", rowId, {
+            summaryField : summaryRow.toNumber()
+        });
+        
+        // Get total Summary Value
+        for (var e = 0; e < d.length; e++) {
+            var f = d[e];
+            totalCol 	+= $(grid).jqGrid("getCell", f, colId).toNumber();	
+            sumField 	+= $(grid).jqGrid("getCell", f, "summaryField").toNumber();
+        }
+        
+        // Trim text data to 2 decimal place in maximum
+        sumField = sumField.toNumber();
+        totalCol = totalCol.toNumber();
+
+        // Set Total Summary Value;
+        switch(colId){
+        	case "monday":
+        		$(grid).jqGrid('footerData','set', {monday: totalCol, summaryField : sumField}); break;
+        	case "tuesday":
+        		$(grid).jqGrid('footerData','set', {tuesday: totalCol, summaryField : sumField}); break;
+        	case "wednesday":
+        		$(grid).jqGrid('footerData','set', {wednesday: totalCol, summaryField : sumField}); break;
+        	case "thursday":
+        		$(grid).jqGrid('footerData','set', {thursday: totalCol, summaryField : sumField}); break;
+        	case "friday":
+        		$(grid).jqGrid('footerData','set', {friday: totalCol, summaryField : sumField}); break;
+        	case "saturday":
+        		$(grid).jqGrid('footerData','set', {saturday: totalCol, summaryField : sumField}); break;
+        	case "sunday":
+        		$(grid).jqGrid('footerData','set', {sunday: totalCol, summaryField : sumField}); break;
+        }
+	}
+	
+	function updateEntry(grid, id){
+
+		// Calculate summary row
+		
+		var sumField = 0, totalMonday = 0, totalTuesday = 0, totalWednesday = 0, totalThursday = 0, totalFriday = 0, totalSaturday = 0, totalSunday = 0, totalSummary = 0;
+
+    	sumField += $(grid).jqGrid("getCell", id, "monday").toNumber();
+        sumField += $(grid).jqGrid("getCell", id, "tuesday").toNumber();
+        sumField += $(grid).jqGrid("getCell", id, "wednesday").toNumber();
+        sumField += $(grid).jqGrid("getCell", id, "thursday").toNumber();
+        sumField += $(grid).jqGrid("getCell", id, "friday").toNumber();
+        sumField += $(grid).jqGrid("getCell", id, "saturday").toNumber();
+        sumField += $(grid).jqGrid("getCell", id, "sunday").toNumber();
+          
+        $(grid).jqGrid("setRowData", id, {
+             summaryField : sumField
+        });
+        
+        // Calculate total summary
+        
+        var d = $(grid).jqGrid("getDataIDs");
+        for (var e = 0; e < d.length; e++) {
+            var f = d[e], row = "", sumField = 0;
+            
+			totalMonday 	+= $(grid).jqGrid("getCell", f, "monday").toNumber();
+			totalTuesday 	+= $(grid).jqGrid("getCell", f, "tuesday").toNumber();
+			totalWednesday 	+= $(grid).jqGrid("getCell", f, "wednesday").toNumber();
+			totalThursday 	+= $(grid).jqGrid("getCell", f, "thursday").toNumber();
+			totalFriday 	+= $(grid).jqGrid("getCell", f, "friday").toNumber();
+			totalSaturday 	+= $(grid).jqGrid("getCell", f, "saturday").toNumber();
+			totalSunday 	+= $(grid).jqGrid("getCell", f, "sunday").toNumber();
+			totalSummary 	+= $(grid).jqGrid("getCell", f, "summaryField").toNumber();
+			  				
+        }
+         
+		$(grid).jqGrid('footerData','set', 
+				{	
+					projectName: '<spring:message code="lbl.time_card.total" /> :', 
+					summaryField: totalSummary.toNumber(), 
+					monday: totalMonday.toNumber(), 
+					tuesday: totalTuesday.toNumber(), 
+					wednesday: totalWednesday.toNumber(), 
+					thursday: totalThursday.toNumber(), 
+					friday: totalFriday.toNumber(), 
+					saturday: totalSaturday.toNumber(), 
+					sunday: totalSunday.toNumber()
+				}
+		);
+
+	}
+	
+	function addNewProject(grid,projectTypeName, projectID, projectName){
+		var array = $(grid).jqGrid('getDataIDs');
+		var rowId = array[array.length];
+		var newRow = {
+			timeCardProjectID: 0, 
+			isDefault: 0, 
+			projectID: projectID, 
+			projectTypeName : projectTypeName,
+			projectName: projectName
+		};
+		$(grid).jqGrid('saveRow', lastsel, 
+		{ 
+		    aftersavefunc: function() {
+				updateEntry(grid, lastsel);
+		        return true; 
+		    },
+		});
+		$(grid).jqGrid('restoreRow',lastsel); 
+		$(grid).jqGrid('resetSelection');
+		lastsel = 0;
+		$(grid).addRowData(rowId, newRow);
+	}
+	
+	function reloadProject(startDate, endDate){
+		console.log("start"+ typeof(startDate));
+		//var data = "startDate="+startDate+"&endDate="+endDate;
+		var data = "startDate="+""+"&endDate="+ "";
+		//var data = null ;
+		if(timeCardID != null){
+			data += "&timeCardID="+timeCardID;
+		}
+		if($('#projectType').val() != null){
+			data += "&projectTypeID=" + $('#projectType').val(); 
+		}
+		$.ajax({
+			data: data,
+			type: "post",
+			url: "<c:url value='/time-cards/selectProjectList.html' />",
+			success: function(result){
+				$(".projectList").html(result);
+				$("#projectID").chosen({allow_single_deselect: true});
+				$('.chzn-done').removeAttr('style');
+				$('.chzn-done').css({
+					'height' : '0px',
+					'visibility' : 'hidden',
+					'position' : 'absolute',
+					'padding' : '0px',
+					'margin' : '5px 0 0 0'
+				});
+			}
+		});
+	}
+	
+	function generateDateRangColumn(mon) {
+		return [ 
+		         "<spring:message code='th.action'/>", 
+		         "Time Card Project ID", 
+		         "Default", 
+		         "Submitted", 
+		         "Project ID", 
+		         "<spring:message code='th.project_type'/>",
+		         "<spring:message code='th.time_card.project_name'/>",
+		         "<spring:message code='lbl.time_card.total'/>",
+		         "<spring:message code='th.time_card.mon'/>, " + mon.toString("dd-MM"),
+		         "<spring:message code='th.time_card.tue'/>, " + mon.add(1).days().toString("dd-MM"),
+		         "<spring:message code='th.time_card.wed'/>, " + mon.add(1).days().toString("dd-MM"),
+		         "<spring:message code='th.time_card.thu'/>, " + mon.add(1).days().toString("dd-MM"),
+		         "<spring:message code='th.time_card.fri'/>, " + mon.add(1).days().toString("dd-MM"),
+		         "<spring:message code='th.time_card.sat'/>, " + mon.add(1).days().toString("dd-MM"),
+		         "<spring:message code='th.time_card.sun'/>, " + mon.add(1).days().toString("dd-MM")
+		];
+	}
+
+	function movePrevWeek(mon){
+		mon.add(-7).days();
+		$("#weekDate").datepicker('setDate', mon);
+		var colNames = generateDateRangColumn(mon);
+		var colModels = getColumnModels();
+		renderNewTimeCard(g, p, colNames, colModels, mon);
+	}
+	
+	function moveNextWeek(mon){
+		mon.add(7).days();
+		var curDate = new Date();
+		//curDate.last().monday();
+		if(curDate >= mon){
+			$("#weekDate").datepicker('setDate', mon);
+			var colNames = generateDateRangColumn(mon);
+			var colModels = getColumnModels();
+			renderNewTimeCard(g, p, colNames, colModels, mon);
+		}
+	}
+	
+	function addRowsFeatureJQgrid(id, className){
+		$("#"+id+"_monday, #"+id+"_tuesday, #"+id+"_wednesday, #"+id+"_thursday, #"+id+"_friday, #"+id+"_saturday, #"+id+"_sunday").addClass(className);
+	}
+	
+	function getColumnModels(){
+		return [{
+			name : "act",
+			index : "act",
+			width : 30,
+		}, {
+			name : "timeCardProjectID",
+			index : "timeCardProjectID",
+			hidden: true, 
+			editable: false
+		}, {
+			name : "isDefault",
+			index : "isDefault",
+			hidden: true, 
+			editable: false
+		}, {
+			name : "submitted",
+			index : "submitted",
+			hidden: true, 
+			editable: false
+		}, {
+			name : "projectID",
+			index : "projectID",
+			hidden: true, 
+			editable: false
+		},
+		{
+			name : "projectTypeName",
+			index: "projectTypeName",
+			editable: false,
+			sortable: false,
+			width: 100
+		},
+		{
+			name : "projectName",
+			index : "projectName",
+			editable: false,
+			sortable: false,
+			width : 150
+		},
+		{
+			name : "summaryField",
+			index : "summaryField",
+			editable : false,
+			sortable : false,
+			width: 50,
+			align: 'right'
+		}, {
+			name : "monday",
+			index : "monday",
+			align: "right",
+			editable: true, 
+			sortable: false,
+			width : 50,
+			editoptions: editOptionOfTimeCard()
+		}, {
+			name : "tuesday",
+			index : "tuesday",
+			align: "right",
+			editable: true,
+			sortable: false,
+			width : 50,
+			editoptions: editOptionOfTimeCard()
+		}, {
+			name : "wednesday",
+			index : "wednesday",
+			align: "right",
+			editable: true,
+			sortable: false,
+			width : 50,
+			editoptions: editOptionOfTimeCard()
+		}, {
+			name : "thursday",
+			index : "thursday",
+			align: "right",
+			editable: true,
+			sortable: false,
+			width : 50,
+			editoptions: editOptionOfTimeCard()
+		}, {
+			name : "friday",
+			index : "friday",
+			align: "right",
+			editable: true,
+			sortable: false,
+			width : 50,
+			editoptions: editOptionOfTimeCard()
+		}, {
+			name : "saturday",
+			index : "saturday",
+			align: "right",
+			editable: true,
+			sortable: false,
+			width : 50 ,
+			editoptions: editOptionOfTimeCard()
+		}, {
+			name : "sunday",
+			index : "sunday",
+			align: "right",
+			editable: true,
+			sortable: false,
+			width : 50,
+			editoptions: editOptionOfTimeCard()
+		}];	
+	}
+	
+	
+	function editOptionOfTimeCard(){
+		var dataEvents = { 
+				dataEvents: [  {type : 'keydown', fn : keydownfn},{ type: 'keyup', fn: fn } ], 
+				dataInit: function(element){
+					$(element).autoNumeric({aPad: false, aSep: ""});
+				}
+		};
+		function fn(e){
+			// $(e.target) = current input we are active
+         	$(e.target).parent().attr("title", $(e.target).val());
+         	//console.log($(this).attr("name"));
+         	var id = $(g).jqGrid('getGridParam', 'selrow');
+         	// calculateSummary(grid, rowId, colId);
+			calculateSummary(g, id, $(this).attr("name"), $(this));
+		}
+		
+		// remove , catch selection and focus on the cell with row (by id of input) by Tab Key
+		function keydownfn(e){
+		
+			var id = $(g).jqGrid('getGridParam', 'selrow');
+			var key = e.charCode || e.keyCode;
+			if(key == 9){
+				  if (id == null) return;
+				  var ids = $(g).jqGrid("getDataIDs");
+				  var index =$(g).getInd(id);
+				  if (ids.length < 2) return;
+				 	 index++;
+				  if (index > ids.length) index = 1;
+				  if(id && id!==lastsel){ 
+					  $(g).restoreRow(lastsel); 
+					  lastsel=id; 
+				  }
+				  $(g).saveRow(id,false);
+				  $(g).editRow(ids[index - 1],true,function(){
+					  elementSelect = ids[index - 1]+'_'+cellEdit;
+					  $("#" + elementSelect).focus();
+				  });
+				  $(g).resetSelection();
+				  $(g).jqGrid('setSelection',ids[index - 1]);
+				  scrollToRow(g,ids[index - 1]);
+				  return false; 
+			}
+			
+		}
+		
+		return dataEvents;
+	}
+
+	// Scroll Rows
+	function scrollToRow (targetGrid, id) {
+	    var rowHeight = 32; // Default height
+	    var index = $(targetGrid).getInd(id);
+	    if(index >  7){
+	    	$(targetGrid).closest(".ui-jqgrid-bdiv").scrollTop(rowHeight * index);
+	    }
+	    else if(index == 1){
+	    	$(targetGrid).closest(".ui-jqgrid-bdiv").scrollTop(0);
+	    }
+	}
+	
+	
+	function getTotalWorkingHours(grid, row){
+		var monday = $(grid).jqGrid("getCell", row, "monday").toNumber();
+		var tuesday = $(grid).jqGrid("getCell", row, "tuesday").toNumber();
+		var wednesday = $(grid).jqGrid("getCell", row, "wednesday").toNumber();
+		var thursday = $(grid).jqGrid("getCell", row, "thursday").toNumber();
+		var friday = $(grid).jqGrid("getCell", row, "friday").toNumber();
+		var saturday = $(grid).jqGrid("getCell", row, "saturday").toNumber();
+		var sunday = $(grid).jqGrid("getCell", row, "sunday").toNumber();
+		return monday+tuesday+wednesday+thursday+friday+saturday+sunday;
+	}
+	
+	function putElement(element){
+		if($.inArray(element,HolidayWeek)== -1){
+			HolidayWeek.push(element);
+		}
+	}
+	
+	function renderNewTimeCard(grid, page, colNames, colModels, mon) {
+		var weekday=new Array(7);
+		weekday[0]="sunday";
+		weekday[1]="monday";
+		weekday[2]="tuesday";
+		weekday[3]="wednesday";
+		weekday[4]="thursday";
+		weekday[5]="friday";
+		weekday[6]="saturday";
+		var startDate = mon.add(-6).days().toString(dateFormat);
+		var year = mon.getFullYear();
+		var week = mon.getWeek();
+		var endDate = mon.add(7).days().toString(dateFormat);
+		reload = false;
+		$(".message-information").hide();
+		$(grid).GridUnload();
+		$(grid).jqGrid({
+			url : "<c:url value='/time-cards/entryJqgrid.html' />",
+			datatype : "json",
+			mtype : "GET",
+			colNames : colNames,
+			colModel : colModels,
+			postData : {
+				startDate: function(){
+					return startDate; 
+				},
+				endDate: function(){
+					return endDate;
+				},
+				year: function(){
+					return year; 
+				},
+				week: function(){
+					return week;
+				}
+			},
+			rowNum : 99999,
+			autowidth : true,
+			rownumbers : true,
+			pager : "page",
+			viewrecords : true,
+			sortable: false,
+			editable: true,
+			caption : false,
+			emptyrecords : "Empty records",
+			loadonce : false,
+			multiselect : true,
+			height : 230,
+			multiboxonly : true,
+			search : false, 
+			footerrow : true, 
+			userDataOnFooter : true, 
+			editurl:'clientArray',
+			
+			onCellSelect: function(	id, iCol, cellcontent, e){
+				//var form = ".form";
+				var ids = $(g).jqGrid("getDataIDs");
+			    $(grid).saveRow(ids[lastsel],false);
+				$(g).resetSelection().setSelection(id, true);
+				var colModel = $(grid).jqGrid('getGridParam', 'colModel');
+				cellEdit = colModel[iCol].name;
+				$(g).editRow(ids[id - 1],true,function(){
+					  elementSelect = ids[id - 1]+'_'+cellEdit;
+					  $("#" + elementSelect).focus();
+				  });
+				
+			    $("#projectID").removeClass("validate[required]");
+				if(id && id!==lastsel){ 
+					$(grid).jqGrid('saveRow', lastsel, null);
+					$(grid).jqGrid('restoreRow',lastsel); 
+					$(grid).jqGrid('editRow',id,true);
+					$("input",e.target).focus();
+					lastsel=id; 
+				} 		
+		    	$("tr#"+id+".jqgrow > td > input.cbox:disabled").attr("checked", false);	
+			    $("#projectID").addClass("validate[required]");
+			},
+			onSelectRow: function(id){
+				$("input[type='text']").bind('click',function(){
+					cellEdit = $(this).attr('name');
+				    });
+				return true;
+			},
+			beforeProcessing: function(data, status, xhr){
+				HolidayWeek = [];
+				var sd = new Date(startDate);
+				var ed = new Date(endDate);
+				processData = {
+					"startDate": sd.getTime()-1,
+					"endDate" : ed.getTime()-1	
+				};
+				$.ajax({
+					type : "POST",
+					url : "<c:url value='/time-cards/entryJqgridCalender.html' />",
+					dataType : "json",
+					contentType : "application/json",
+					data : JSON.stringify(processData),
+					async : false,
+					success : function(event){
+						$.each(event,function(key,value){
+							if(value.startDate == value.endDate){
+								var d = new Date(value.startDate);
+								putElement(weekday[d.getDay()]);
+							}else{
+								var between = [];
+								stDate = new Date(value.startDate);
+								enDate = new Date(value.endDate);
+								sd.setHours(0, 0, 0, 0);
+								ed.setHours(0,0,0,0);
+								while (stDate <= enDate) {
+									if(stDate>= sd && stDate < ed){
+									    between.push(new Date(stDate));
+									}
+									stDate.setDate(stDate.getDate() + 1);
+								}
+								$.each(between,function(index,value){
+									putElement(weekday[value.getDay()]);
+								});
+							}
+						});
+					}
+				});			
+				
+			},
+			loadComplete : function() {
+				reload = true;
+				lastsel = 0;
+				var userdata = $(grid).jqGrid('getGridParam', 'userData');
+                var ids =$(grid).jqGrid('getDataIDs');
+                isSubmitted = userdata.submitted;
+                timeCardID = userdata.timeCardID;
+                for (var i=0;i<ids.length;i++) {
+                    var id=ids[i];
+                    if (isSubmitted) {
+                        $("#"+ id).addClass("not-editable-row");
+                        $("#"+ id).find("button").remove();
+                    }
+                    $("#"+ id).find("input[type='checkbox']").attr("disabled", isSubmitted);
+                }
+                pStartDate=startDate;
+                pEndDate=endDate;
+        		reloadProject(startDate, endDate);
+        		if(isSubmitted){
+        			$(".btnDeleteSelected, .save, .submit, #addProject, #cb_timeCardList, .btncopy").attr("disabled", "disabled").button("option", "disabled", isSubmitted );
+        		}else{
+        			$(".btnDeleteSelected, .save, .submit, #addProject, #cb_timeCardList, .btncopy").removeAttr("disabled").button("option", "disabled", isSubmitted );
+        		}
+			},
+		    beforeSelectRow: function(rowid, e) {
+		    	return true;
+		    },
+		    onSelectAll: function(aRowids,status) {
+		        if (status) {
+		            var cbs = $("tr.jqgrow > td > input.cbox:disabled", $(grid)[0]);
+		            cbs.removeAttr("checked");
+		            cbs.closest("tr").removeClass("ui-state-highlight");
+		            $(grid)[0].p.selarrrow = $(grid).find("tr.jqgrow:has(td > input.cbox:checked)").map(function() { return this.id; }).get(); // convert to instance of Array
+		        }
+		    },
+			jsonReader : {
+				page : "page",
+				total : "total",
+				records : "records",
+				root : "rows",
+				repeatitems : false
+			},
+			gridComplete : function() {
+		        var d = $(grid).jqGrid("getDataIDs");
+		        for (var e = 0; e < d.length; e++) {
+		            var f = d[e], row = "", sumField = 0, monday = 0, tuesday = 0, wednesday = 0, thursday = 0, friday = 0, saturday = 0, sunday = 0;
+		            var isDefault = ($(grid).jqGrid("getCell", f, "isDefault")==1) ? true : false;
+		            
+		            //Add color red to satruday and sunday
+		            $(grid).jqGrid("setCell",f,"saturday","","red");
+		            $(grid).jqGrid("setCell",f,"sunday","","red");
+					$.each(HolidayWeek,function(k,v){
+						
+						$(grid).jqGrid("setCell",f,v,"","pink");
+					});		            
+		            // Add blank to the zero value of timecard
+		            
+					monday 		= $(grid).jqGrid("getCell", f, "monday").toNumber() == 0 ? '' : $(grid).jqGrid("getCell", f, "monday").toNumber();
+					tuesday 	= $(grid).jqGrid("getCell", f, "tuesday").toNumber() == 0 ? '' : $(grid).jqGrid("getCell", f, "tuesday").toNumber();
+					wednesday 	= $(grid).jqGrid("getCell", f, "wednesday").toNumber() == 0 ? '' : $(grid).jqGrid("getCell", f, "wednesday").toNumber();
+					thursday 	= $(grid).jqGrid("getCell", f, "thursday").toNumber() == 0 ? '' : $(grid).jqGrid("getCell", f, "thursday").toNumber();
+					friday 		= $(grid).jqGrid("getCell", f, "friday").toNumber() == 0 ? '' : $(grid).jqGrid("getCell", f, "friday").toNumber();
+					saturday 	= $(grid).jqGrid("getCell", f, "saturday").toNumber() == 0 ? '' : $(grid).jqGrid("getCell", f, "saturday").toNumber();
+					sunday 		= $(grid).jqGrid("getCell", f, "sunday").toNumber() == 0 ? '' : $(grid).jqGrid("getCell", f, "sunday").toNumber();
+						
+					// Calculate summary for each rows					
+		            	
+		            sumField += $(grid).jqGrid("getCell", f, "monday").toNumber();
+		            sumField += $(grid).jqGrid("getCell", f, "tuesday").toNumber();
+		            sumField += $(grid).jqGrid("getCell", f, "wednesday").toNumber();
+		            sumField += $(grid).jqGrid("getCell", f, "thursday").toNumber();
+		            sumField += $(grid).jqGrid("getCell", f, "friday").toNumber();
+		            sumField += $(grid).jqGrid("getCell", f, "saturday").toNumber();
+		            sumField += $(grid).jqGrid("getCell", f, "sunday").toNumber();
+
+		            if(isDefault){
+		            	$("#jqg_timeCardList_"+f).remove();
+		            }else{
+		            	row += "<button class='btnDelete' value='" + f + "' >Delete</button>";
+		            }
+		            
+		            $(grid).jqGrid("setRowData", f, {
+		                act: row,
+		                monday : monday,
+		                tuesday : tuesday,
+		                wednesday : wednesday,
+		                thursday : thursday,
+		                friday : friday,
+		                saturday : saturday,
+		                sunday : sunday,
+		                summaryField : sumField.toNumber()
+		            });
+
+    				
+		        }
+    	        $(".btnDelete").button({
+    	            text: false,
+    	            icons: {
+    	                primary: "ui-icon-trash"
+    	            }
+    	        });
+    	        $(".btnDelete").click(function (a) {
+	    	            a.preventDefault();    	            
+
+						$(grid).jqGrid('saveRow', lastsel, 
+						{ 
+						    aftersavefunc: function() {
+								updateEntry(grid, lastsel);
+						        return true; 
+						    },
+						});
+						$(grid).jqGrid('restoreRow',lastsel);						
+	    	            var b = $(this).val();
+	    	            // var c = $(grid).jqGrid("getCell", b, "projectName");
+                        var projectID = $(grid).jqGrid("getCell", b, "projectID");
+                        var projectName = $(grid).jqGrid("getCell", b, "projectName");
+                        var timeCardProjectID = $(grid).jqGrid("getCell", b, "timeCardProjectID");
+                        var totalWorkingHours = getTotalWorkingHours(grid, b); 
+						
+                        if(totalWorkingHours > 0){
+    	    	            $("#dialog").html("<spring:message code='message.time_card.working_hour_not_empty'/> [" + projectID + "] ? ");
+    	    	            $("#dialog").dialog({
+    	    	                resizable: false,
+    	    	                height: 'auto',
+    	    	                modal: true,
+    	    	                title: "<spring:message code='dialog.title.warning'/>",
+    	    	                position: "center",
+    	    	                buttons: {
+    	    	                    "<spring:message code='dialog.button.ok'/>": function () {
+       	                                timeCardProjectId.push(timeCardProjectID);
+       	                                $(grid).jqGrid("delRowData", b);
+       	                                updateEntry(grid, lastsel);
+       	                                $("#projectID").append("<option value='"+projectID+"'>"+projectName+"</option>");
+       	                                $("#projectID").trigger("liszt:updated");
+       	                                $("#dialog").dialog("close")
+    	    	                    },
+    	    	                    "<spring:message code='dialog.button.cancel'/>": function () {
+    	    	                        $(this).dialog("close")
+    	    	                    }
+    	    	                }
+    	    	            });
+                        }else{
+                           timeCardProjectId.push(timeCardProjectID);
+                           $(grid).jqGrid("delRowData", b);
+                           updateEntry(grid);
+                           $("#projectID").append("<option value='"+projectID+"'>"+projectName+"</option>");
+                           $("#projectID").find("option[value='false']").remove();
+                           $("#projectID").trigger("liszt:updated");                        	
+                        }
+	    	        });
+		        $(grid).jqGrid('footerData','set', {summaryField: $(grid).jqGrid('getCol','summaryField',false,'sum')});
+			}
+		});
+	}
+</script>	
+<div class="adminform">
+	<div class="title">
+		<spring:message code="legend.time_card.entry" />
+	</div>
+	<div class="opr">
+		<form action="">
+			<fieldset>
+				<legend>
+					<spring:message code="lbl.filter" />
+				</legend>
+				<table class="form" cellspacing="0" cellpadding="0">
+					<tr>
+						<td class="label"><label><spring:message code="lbl.select_project_type"/></label>
+							<span class="required">*</span>
+						</td>
+						<td>
+							<select id="projectType" class="select-single">
+								<c:forEach var="projectType" items="${projectTypeList}">
+									<option value="${projectType.projectTypeID}"><c:out value="${projectType.projectTypeName}"/></option>
+								</c:forEach>
+							</select>
+						</td>
+						<td  class="label"><label for="projectId"><spring:message
+									code="lbl.select_project" /></label><span class="required">*</span></td>
+						<td colspan="2" class="input projectList">
+							<select class='select-single'>
+								<option ></option>
+							</select>
+						</td>
+						<td class="input"><button name="addProject" class="add"
+								id="addProject" class="Add">
+								<spring:message code="button.add_project" />
+							</button></td>
+					</tr>
+					
+				</table>
+			</fieldset>
+		</form>
+		<form class="form" action="">
+			<fieldset>
+				<legend>
+					<spring:message code="legend.time_card.entry" />
+				</legend>
+				<table>
+					<tr>
+						<td class="label"><label for="weekDate"><spring:message
+									code="lbl.select_date" /></label><span class="required">*</span></td>
+						<td  colspan="2" class="input"><input type="text" readonly="readonly"
+							class="textfield" name="weekDate" id="weekDate" /></td>
+						<td class="input"><button class="prev" name="prev" id="prev">
+								<spring:message code="button.previous" />
+							</button>
+							<button class="next" name="next" id="next">
+								<spring:message code="button.next" />
+							</button></td>
+					</tr>
+				</table>
+				<div>
+					<table id="timeCardList"></table>
+					<div id="timeCardPage"></div>
+					<div>
+						<button class="btncopy copy">
+							<spring:message code="button.copy"/>
+						</button>
+						<button class="btnDeleteSelected delete">
+							<spring:message code="button.delete_selected" />
+						</button>
+						<button class="save">
+							<spring:message code="button.save" />
+						</button>
+						<button class="right submit">
+							<spring:message code="button.submit" />
+						</button>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</div>
+<div class="clr"></div>
