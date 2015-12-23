@@ -13,9 +13,9 @@
         
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
-		<property name="url" value="jdbc:sqlserver://120.136.29.196\MSSSQLSERVER08;DatabaseName=Yuga" />
-		<property name="username" value="yuga" />
-		<property name="password" value="123456" />
+		<property name="url" value="jdbc:sqlserver://xxxxx\MSSSQLSERVER08;DatabaseName=xxxx" />
+		<property name="username" value="xxxx" />
+		<property name="password" value="xxxx" />
 		<property name="initialSize" value="20" />
 		<property name="maxActive" value="100" />
 		<property name="maxIdle" value="20" />
