@@ -1,9 +1,0 @@
-<field name="VProjectListDetial_projectID" class="java.lang.String"/>
-	<field name="VProjectListDetial_projectName" class="java.lang.String"/>
-	<field name="VProjectListDetial_projectTypeName" class="java.lang.String"/>
-	<field name="VProjectListDetial_customerName" class="java.lang.String"/>
-	<field name="VProjectListDetial_PM" class="java.lang.String"/>
-	<field name="VProjectListDetial_revenue" class="java.lang.Double"/>
-	<field name="VProjectListDetial_actualMM" class="java.lang.Short"/>
-	<field name="VProjectListDetial_actualStartDate" class="java.sql.Timestamp"/>
-	<field name="VProjectListDetial_actualEndDate" class="java.sql.Timestamp"/>

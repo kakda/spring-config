@@ -1,8 +1,0 @@
-#login form
-lbl.user=User
-lbl.password=Password
-lbl.login=Login
-
-#button
-button.save=Save
-button.login=Login
